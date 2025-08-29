@@ -12,6 +12,10 @@ import SignIN from "../pages/SignIn";
 import Home from "../pages/Home";
 import ResetPassword from "../pages/ResetPassword";
 import RequestReset from "../pages/RequestReset";
+import Dashboard from "../pages/Dashboard";
+import Search from "../pages/Search";
+import DocumentForm from "../pages/DocumentForm";
+import QA from "../pages/QA";
 
 const PrivateRoute = ({ children }) => {
   const isAuthenticated = localStorage.getItem("token");
@@ -23,14 +27,6 @@ const NotPrivateRoute = ({ children }) => {
   return !isAuthenticated ? children : <Navigate to="/map" replace={true} />;
 };
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: (
-      <NotPrivateRoute>
-        <Home />{" "}
-      </NotPrivateRoute>
-    ),
-  },
   {
     path: "/map",
     element: (
@@ -79,12 +75,52 @@ const router = createBrowserRouter([
       </NotPrivateRoute>
     ),
   },
-
   {
-    path: "/request_reset",
+    path: "/",
     element: (
       <NotPrivateRoute>
-        <RequestReset />
+        <Dashboard />
+      </NotPrivateRoute>
+    ),
+  },
+  {
+    path: "/dashboard",
+    element: (
+      <NotPrivateRoute>
+        <Dashboard />
+      </NotPrivateRoute>
+    ),
+  },
+
+  {
+    path: "/documents/new",
+    element: (
+      <NotPrivateRoute>
+        <DocumentForm />
+      </NotPrivateRoute>
+    ),
+  },
+  {
+    path: "/documents/new",
+    element: (
+      <NotPrivateRoute>
+        <DocumentForm />
+      </NotPrivateRoute>
+    ),
+  },
+  {
+    path: "/qa",
+    element: (
+      <NotPrivateRoute>
+        <QA />
+      </NotPrivateRoute>
+    ),
+  },
+  {
+    path: "/search",
+    element: (
+      <NotPrivateRoute>
+        <Search />
       </NotPrivateRoute>
     ),
   },
