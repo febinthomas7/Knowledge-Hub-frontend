@@ -2,11 +2,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { handleError, handleSuccess } from "../../utils";
 import { ToastContainer } from "react-toastify";
 import { useState } from "react";
-// import { Helmet } from "react-helmet";
 import { GoEye, GoEyeClosed } from "react-icons/go";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { SparklesIcon } from "@heroicons/react/24/outline";
 
-const Signin = () => {
+const Register = () => {
   const navigate = useNavigate();
   const [isBtn, setIsBtn] = useState(false);
   const [pswd, setPswd] = useState(true);
@@ -51,27 +51,27 @@ const Signin = () => {
       }
 
       if (sucess) {
-        try {
-          const emailResponse = await fetch(
-            `${import.meta.env.VITE_BASE_URL}/api/auth/send-welcome-email`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ email, name }),
-            }
-          );
+        // try {
+        //   const emailResponse = await fetch(
+        //     `${import.meta.env.VITE_BASE_URL}/api/auth/send-welcome-email`,
+        //     {
+        //       method: "POST",
+        //       headers: {
+        //         "Content-Type": "application/json",
+        //       },
+        //       body: JSON.stringify({ email, name }),
+        //     }
+        //   );
 
-          const emailResult = await emailResponse.json();
-          if (emailResponse.ok) {
-            console.log("Welcome email sent:", emailResult.message);
-          } else {
-            console.error("Failed to send welcome email:", emailResult.error);
-          }
-        } catch (emailError) {
-          console.error("Error while sending email:", emailError);
-        }
+        //   const emailResult = await emailResponse.json();
+        //   if (emailResponse.ok) {
+        //     console.log("Welcome email sent:", emailResult.message);
+        //   } else {
+        //     console.error("Failed to send welcome email:", emailResult.error);
+        //   }
+        // } catch (emailError) {
+        //   console.error("Error while sending email:", emailError);
+        // }
         setLoading(false);
         setIsWait(false);
         handleSuccess(message);
@@ -90,11 +90,7 @@ const Signin = () => {
     }
   };
   return (
-    <div className=" z-10 w-full h-svh flex justify-center items-center  bg-black  bg-no-repeat bg-center bg-cover bg-[url('/coverpage.png')] aspect-video ">
-      {/* <Helmet>
-        <title>SignIn - Flexifyy</title>
-        <meta name="description" content="user sign in page" />
-      </Helmet> */}
+    <div className=" z-10 w-full h-svh flex justify-center items-center  bg-black  aspect-video ">
       <div className=" w-full h-svh flex justify-center items-center fixed  z-10"></div>
       <header
         className={` text-white  sm:px-10 sm:py-2 z-40 flex top-0 justify-between fixed w-full  items-center duration-75 ease-in`}
@@ -103,10 +99,19 @@ const Signin = () => {
       <div className="flex justify-center text-black h-full items-center w-full z-40 backdrop-blur-[2px]">
         <div className="bg-white  p-8 rounded-lg shadow-lg w-full max-w-md relative mx-5 ">
           <Link to="/">
-            <div className="logo   flex justify-center items-center">
-              <img src="full_logo.png" alt="" className="w-40 h-15" />
+            <div className="text-center">
+              <div className="flex justify-center">
+                <SparklesIcon className="h-12 w-12 text-indigo-600" />
+              </div>
+              <h2 className="mt-6 text-3xl font-bold text-gray-900">
+                Create your account
+              </h2>
+              <p className="mt-2 text-sm text-gray-600">
+                Join the Knowledge Hub community
+              </p>
             </div>
           </Link>
+
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label className="block  mb-2" htmlFor="name">
@@ -191,4 +196,4 @@ const Signin = () => {
   );
 };
 
-export default Signin;
+export default Register;

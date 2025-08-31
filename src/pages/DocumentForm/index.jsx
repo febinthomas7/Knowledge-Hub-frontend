@@ -1,23 +1,22 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-// import { documentsAPI, aiAPI } from "../utils/api";
 import Layout from "../../components/Layout";
 import { SparklesIcon, TagIcon } from "@heroicons/react/24/outline";
-// import toast from "react-hot-toast";
 
 const DocumentForm = () => {
-  const { id } = useParams();
+  const { id, teamId } = useParams();
   const navigate = useNavigate();
   const isEditing = Boolean(id);
-
   const [formData, setFormData] = useState({
     title: "",
     content: "",
     tags: [],
-    isPublic: false,
+    summary: "",
   });
   const [loading, setLoading] = useState(false);
-  const [aiLoading, setAiLoading] = useState(false);
+  const [aiTagLoading, setTagAiLoading] = useState(false);
+  const [aiSummaryLoading, setSummaryAiLoading] = useState(false);
+
   const [tagInput, setTagInput] = useState("");
 
   useEffect(() => {
@@ -28,25 +27,38 @@ const DocumentForm = () => {
 
   const fetchDocument = async () => {
     try {
-      const response = await documentsAPI.getById(id);
-      const doc = response.data.document;
+      const response = await fetch(
+        `${
+          import.meta.env.VITE_BASE_URL
+        }/api/user/document?teamId=${teamId}&docId=${id}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+
+      const doc = data.document;
+
       setFormData({
         title: doc.title,
         content: doc.content,
         tags: doc.tags || [],
-        isPublic: doc.isPublic,
+        summary: doc.summary,
       });
+      // setFormData(fakeDocument);
     } catch (error) {
-      toast.error("Failed to fetch document");
       navigate("/dashboard");
     }
   };
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: value,
     });
   };
 
@@ -71,51 +83,68 @@ const DocumentForm = () => {
     });
   };
 
-  const handleGenerateAISummary = async () => {
-    if (!formData.content) {
-      toast.error("Please add content first");
-      return;
-    }
+  const handleGenerateAISummary = async (e) => {
+    e.preventDefault();
 
-    setAiLoading(true);
+    setSummaryAiLoading(true);
     try {
-      const response = await aiAPI.generateSummary({
-        title: formData.title,
-        content: formData.content,
+      const response = await fetch(
+        `${import.meta.env.VITE_BASE_URL}/api/user/get-summary`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title: formData.title,
+            content: formData.content,
+          }),
+        }
+      );
+
+      const data = await response.json();
+      setFormData({
+        ...formData,
+        summary: data.summary,
       });
-      toast.success("AI summary generated!");
-      // You could show the summary in a modal or preview area
-      console.log("Generated summary:", response.data.summary);
+      console.log("Generated summary:", data.summary);
     } catch (error) {
-      toast.error("Failed to generate summary");
+      console.log(error);
+      // toast.error("Failed to generate summary");
     } finally {
-      setAiLoading(false);
+      setSummaryAiLoading(false);
     }
   };
 
   const handleGenerateAITags = async () => {
-    if (!formData.content) {
-      toast.error("Please add content first");
-      return;
-    }
+    console.log("✅ function triggered"); // this prints, good
 
-    setAiLoading(true);
+    setTagAiLoading(true);
     try {
-      const response = await aiAPI.generateTags({
-        title: formData.title,
-        content: formData.content,
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_BASE_URL}/api/user/get-tags`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            content: formData.content,
+          }),
+        }
+      );
 
-      const newTags = [...new Set([...formData.tags, ...response.data.tags])];
+      const data = await response.json();
+      const newTags = [...new Set([...formData.tags, ...data.tags])];
       setFormData({
         ...formData,
         tags: newTags,
       });
-      toast.success("AI tags generated!");
+      // toast.success("AI tags generated!");
     } catch (error) {
-      toast.error("Failed to generate tags");
+      // toast.error("Failed to generate tags");
     } finally {
-      setAiLoading(false);
+      setTagAiLoading(false);
     }
   };
 
@@ -124,18 +153,53 @@ const DocumentForm = () => {
     setLoading(true);
 
     try {
+      let response;
       if (isEditing) {
-        await documentsAPI.update(id, formData);
-        toast.success("Document updated successfully");
+        // Update existing document
+        response = await fetch(
+          `${
+            import.meta.env.VITE_BASE_URL
+          }/api/user/document/${id}?userId=${localStorage.getItem("userId")}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          }
+        );
       } else {
-        await documentsAPI.create(formData);
-        toast.success("Document created successfully");
+        // Create new document
+
+        response = await fetch(
+          `${
+            import.meta.env.VITE_BASE_URL
+          }/api/user/document?team=${teamId}&userId=${localStorage.getItem(
+            "userId"
+          )}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          }
+        );
       }
+
+      if (!response.ok) {
+        throw new Error("Server error");
+      }
+
+      // toast.success(
+      //   isEditing ? "Document updated successfully" : "Document created successfully"
+      // );
       navigate("/dashboard");
     } catch (error) {
-      toast.error(
-        isEditing ? "Failed to update document" : "Failed to create document"
-      );
+      // toast.error(
+      //   isEditing ? "Failed to update document" : "Failed to create document"
+      // );
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -143,7 +207,7 @@ const DocumentForm = () => {
 
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-4xl mx-auto text-black">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900">
             {isEditing ? "Edit Document" : "Create New Document"}
@@ -197,86 +261,92 @@ const DocumentForm = () => {
               />
             </div>
 
-            {/* AI Actions */}
+            {/* Tags */}
+            {isEditing && (
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Tags
+                </label>
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {formData.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800"
+                    >
+                      {tag}
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveTag(tag)}
+                        className="ml-2 text-indigo-600 hover:text-indigo-800"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+                <div className="flex">
+                  <input
+                    type="text"
+                    value={tagInput}
+                    onChange={(e) => setTagInput(e.target.value)}
+                    onKeyPress={(e) => e.key === "Enter" && handleAddTag(e)}
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-l-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    placeholder="Add a tag"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAddTag}
+                    className="px-4 py-2 border border-l-0 border-gray-300 rounded-r-md bg-gray-50 text-gray-700 hover:bg-gray-100 transition-colors"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+            )}
+
+            <div className="mb-6 flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={handleGenerateAITags}
+                disabled={aiTagLoading || !formData.content}
+                className="inline-flex items-center px-4 py-2 text-sm font-medium text-emerald-700 bg-emerald-50 rounded-md hover:bg-emerald-100 transition-colors disabled:opacity-50"
+              >
+                <TagIcon className="h-4 w-4 mr-2" />
+                {aiTagLoading ? "Generating..." : "Generate AI Tags"}
+              </button>
+            </div>
+
+            {isEditing && (
+              <div className="mb-6">
+                <label
+                  htmlFor="summary"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Summary
+                </label>
+                <textarea
+                  id="summary"
+                  name="summary"
+                  required
+                  rows={12}
+                  value={formData.summary}
+                  onChange={handleChange}
+                  className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  placeholder="Write your document summary here..."
+                />
+              </div>
+            )}
             <div className="mb-6 flex flex-wrap gap-3">
               <button
                 type="button"
                 onClick={handleGenerateAISummary}
-                disabled={aiLoading || !formData.content}
+                disabled={aiSummaryLoading || !formData.content}
                 className="inline-flex items-center px-4 py-2 text-sm font-medium text-indigo-700 bg-indigo-50 rounded-md hover:bg-indigo-100 transition-colors disabled:opacity-50"
               >
                 <SparklesIcon className="h-4 w-4 mr-2" />
-                {aiLoading ? "Generating..." : "Preview AI Summary"}
-              </button>
-
-              <button
-                type="button"
-                onClick={handleGenerateAITags}
-                disabled={aiLoading || !formData.content}
-                className="inline-flex items-center px-4 py-2 text-sm font-medium text-emerald-700 bg-emerald-50 rounded-md hover:bg-emerald-100 transition-colors disabled:opacity-50"
-              >
-                <TagIcon className="h-4 w-4 mr-2" />
-                {aiLoading ? "Generating..." : "Generate AI Tags"}
+                {aiSummaryLoading ? "Generating..." : "Generate AI Summary"}
               </button>
             </div>
-
-            {/* Tags */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Tags
-              </label>
-              <div className="flex flex-wrap gap-2 mb-3">
-                {formData.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800"
-                  >
-                    {tag}
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveTag(tag)}
-                      className="ml-2 text-indigo-600 hover:text-indigo-800"
-                    >
-                      ×
-                    </button>
-                  </span>
-                ))}
-              </div>
-              <div className="flex">
-                <input
-                  type="text"
-                  value={tagInput}
-                  onChange={(e) => setTagInput(e.target.value)}
-                  onKeyPress={(e) => e.key === "Enter" && handleAddTag(e)}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-l-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="Add a tag"
-                />
-                <button
-                  type="button"
-                  onClick={handleAddTag}
-                  className="px-4 py-2 border border-l-0 border-gray-300 rounded-r-md bg-gray-50 text-gray-700 hover:bg-gray-100 transition-colors"
-                >
-                  Add
-                </button>
-              </div>
-            </div>
-
-            {/* Public checkbox */}
-            <div className="mb-6">
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  name="isPublic"
-                  checked={formData.isPublic}
-                  onChange={handleChange}
-                  className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                />
-                <span className="ml-2 text-sm text-gray-700">
-                  Make this document public (visible to all team members)
-                </span>
-              </label>
-            </div>
-
             {/* Actions */}
             <div className="flex justify-end space-x-3">
               <button

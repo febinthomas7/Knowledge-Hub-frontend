@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 // import { useAuth } from '../context/AuthContext';
 // import { documentsAPI } from '../utils/api';
-import Layout from "../components/Layout";
+import Layout from "../../components/Layout";
 import {
   DocumentTextIcon,
   UserIcon,
@@ -12,14 +12,13 @@ import {
   PencilIcon,
   ArrowLeftIcon,
 } from "@heroicons/react/24/outline";
-// import toast from 'react-hot-toast';
 
 const DocumentView = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   //   const { user } = useAuth();
   const user = "";
-  const [document, setDocument] = useState(null);
+  const [document, setDocument] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -28,11 +27,23 @@ const DocumentView = () => {
 
   const fetchDocument = async () => {
     try {
-      const response = await documentsAPI.getById(id);
-      setDocument(response.data.document);
+      const response = await fetch(
+        `${import.meta.env.VITE_BASE_URL}/api/user/document?docId=${id}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to fetch teams");
+
+      const data = await response.json();
+      setDocument(data.document);
     } catch (error) {
-      toast.error("Failed to fetch document");
-      navigate("/dashboard");
+      // toast.error("Failed to fetch document");
+      // navigate("/dashboard");
     } finally {
       setLoading(false);
     }
@@ -70,8 +81,9 @@ const DocumentView = () => {
   }
 
   const canEdit =
-    user?.role === "admin" || document.createdBy._id === user?._id;
-
+    document.createdBy._id === localStorage.getItem("userId") ||
+    document.createdByRole === localStorage.getItem("role");
+  console.log(document);
   return (
     <Layout>
       <div className="max-w-4xl mx-auto space-y-6">
@@ -87,7 +99,7 @@ const DocumentView = () => {
 
           {canEdit && (
             <Link
-              to={`/documents/${document._id}/edit`}
+              to={`/teams/documents/${document._id}/edit`}
               className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-indigo-700 bg-indigo-50 rounded-md hover:bg-indigo-100 transition-colors"
             >
               <PencilIcon className="h-4 w-4 mr-1" />
@@ -119,10 +131,6 @@ const DocumentView = () => {
                   Updated {new Date(document.updatedAt).toLocaleDateString()}
                 </div>
               )}
-              <div className="flex items-center">
-                <EyeIcon className="h-4 w-4 mr-1" />
-                {document.viewCount} views
-              </div>
             </div>
 
             {/* Tags */}

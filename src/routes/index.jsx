@@ -1,22 +1,21 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import { lazy } from "react";
-// const Home = lazy(() => import("../pages/home"));
-import Map from "../pages/Map";
+import React, { useState, useRef, useContext } from "react";
+import { Watch } from "../Context";
+
 import NotFound from "../pages/NotFound";
-import Upload from "../pages/UploadMemory";
-import Gallery from "../pages/Gallery";
-import Profile from "../pages/Profile";
-import GalleryDetails from "../pages/GalleryDetails";
+
 import Login from "../pages/Login";
-import SignIN from "../pages/SignIn";
-import Home from "../pages/Home";
 import ResetPassword from "../pages/ResetPassword";
 import RequestReset from "../pages/RequestReset";
 import Dashboard from "../pages/Dashboard";
 import Search from "../pages/Search";
 import DocumentForm from "../pages/DocumentForm";
 import QA from "../pages/QA";
-
+import Register from "../pages/Register";
+import Home from "../pages/Home";
+import DocumentView from "../pages/DocumentView";
+import Team from "../pages/Team";
 const PrivateRoute = ({ children }) => {
   const isAuthenticated = localStorage.getItem("token");
   return isAuthenticated ? children : <Navigate to="/login" replace={true} />;
@@ -24,49 +23,13 @@ const PrivateRoute = ({ children }) => {
 
 const NotPrivateRoute = ({ children }) => {
   const isAuthenticated = localStorage.getItem("token");
-  return !isAuthenticated ? children : <Navigate to="/map" replace={true} />;
+  return !isAuthenticated ? (
+    children
+  ) : (
+    <Navigate to="/dashboard" replace={true} />
+  );
 };
 const router = createBrowserRouter([
-  {
-    path: "/map",
-    element: (
-      <PrivateRoute>
-        <Map />
-      </PrivateRoute>
-    ),
-  },
-  {
-    path: "/gallery",
-    element: (
-      <PrivateRoute>
-        <Gallery />
-      </PrivateRoute>
-    ),
-  },
-  {
-    path: "/gallery/:id",
-    element: (
-      <PrivateRoute>
-        <GalleryDetails />
-      </PrivateRoute>
-    ),
-  },
-  {
-    path: "/upload",
-    element: (
-      <PrivateRoute>
-        <Upload />
-      </PrivateRoute>
-    ),
-  },
-  {
-    path: "/profile",
-    element: (
-      <PrivateRoute>
-        <Profile />
-      </PrivateRoute>
-    ),
-  },
   {
     path: "/reset_password",
     element: (
@@ -76,52 +39,77 @@ const router = createBrowserRouter([
     ),
   },
   {
+    path: "/request_reset",
+    element: (
+      <NotPrivateRoute>
+        <RequestReset />
+      </NotPrivateRoute>
+    ),
+  },
+
+  {
     path: "/",
     element: (
       <NotPrivateRoute>
-        <Dashboard />
+        <Home />
       </NotPrivateRoute>
     ),
   },
   {
     path: "/dashboard",
     element: (
-      <NotPrivateRoute>
+      <PrivateRoute>
         <Dashboard />
-      </NotPrivateRoute>
+      </PrivateRoute>
     ),
   },
 
   {
-    path: "/documents/new",
+    path: "/teams/:teamId/documents/new",
     element: (
-      <NotPrivateRoute>
+      <PrivateRoute>
         <DocumentForm />
-      </NotPrivateRoute>
+      </PrivateRoute>
     ),
   },
   {
-    path: "/documents/new",
+    path: "/teams/documents/:id/edit",
     element: (
-      <NotPrivateRoute>
+      <PrivateRoute>
         <DocumentForm />
-      </NotPrivateRoute>
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "/teams/documents/:id",
+    element: (
+      <PrivateRoute>
+        <DocumentView />
+      </PrivateRoute>
     ),
   },
   {
     path: "/qa",
     element: (
-      <NotPrivateRoute>
+      <PrivateRoute>
         <QA />
-      </NotPrivateRoute>
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "/team",
+    element: (
+      <PrivateRoute>
+        <Team />
+      </PrivateRoute>
     ),
   },
   {
     path: "/search",
     element: (
-      <NotPrivateRoute>
+      <PrivateRoute>
         <Search />
-      </NotPrivateRoute>
+      </PrivateRoute>
     ),
   },
   {
@@ -133,10 +121,10 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/signin",
+    path: "/register",
     element: (
       <NotPrivateRoute>
-        <SignIN />
+        <Register />
       </NotPrivateRoute>
     ),
   },

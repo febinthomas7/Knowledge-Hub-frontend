@@ -22,13 +22,16 @@ const Layout = ({ children }) => {
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: DocumentTextIcon },
     { name: "Search", href: "/search", icon: MagnifyingGlassIcon },
-    { name: "Add Document", href: "/documents/new", icon: PlusIcon },
+    // { name: "Add Document", href: "/documents/new", icon: PlusIcon },
     { name: "AI Q&A", href: "/qa", icon: SparklesIcon },
+    { name: "Teams", href: "/team", icon: SparklesIcon },
   ];
 
-  const handleLogout = () => {
-    // logout();
-    // navigate("/login");
+  const logout = () => {
+    setTimeout(() => {
+      window.localStorage.clear();
+      navigate("/login");
+    }, 1000);
   };
 
   return (
@@ -112,7 +115,7 @@ const Layout = ({ children }) => {
                 <p className="text-xs text-gray-500 capitalize">{user?.role}</p>
               </div>
               <button
-                onClick={handleLogout}
+                onClick={logout}
                 className="text-gray-400 hover:text-gray-600 transition-colors"
                 title="Logout"
               >

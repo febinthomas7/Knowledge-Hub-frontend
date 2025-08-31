@@ -67,48 +67,87 @@ const fakeDocuments = [
 const Dashboard = () => {
   //   const { user } = useAuth();
   const user = "";
-  const [documents, setDocuments] = useState(fakeDocuments);
+  const [documents, setDocuments] = useState();
+  const [feedLoading, setFeedLoading] = useState(true);
+  const [activities, setActivities] = useState([]);
+
   const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState({
-    total: 0,
-    myDocs: 0,
-    publicDocs: 0,
-  });
+  const [teamName, setTeamName] = useState("");
+  const [teamLoading, setTeamLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-  //   useEffect(() => {
-  //     fetchDocuments();
-  //   }, []);
-
-  const fetchDocuments = async () => {
+  const fetchFeed = async () => {
     try {
-      const response = await documentsAPI.getAll({ limit: 6 });
-      setDocuments(response.data.documents);
-
-      // Calculate stats
-      const total = response.data.pagination.total;
-      const myDocs = response.data.documents.filter(
-        (doc) => doc.createdBy._id === user._id
-      ).length;
-      const publicDocs = response.data.documents.filter(
-        (doc) => doc.isPublic
-      ).length;
-
-      setStats({ total, myDocs, publicDocs });
+      const response = await fetch(
+        `${
+          import.meta.env.VITE_BASE_URL
+        }/api/user/feed?userId=${localStorage.getItem("userId")}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+      setActivities(data);
     } catch (error) {
-      console.error("Failed to fetch documents:", error);
+      console.error("Failed to fetch activity:", error);
     } finally {
-      setLoading(false);
+      setFeedLoading(false);
     }
   };
 
+  useEffect(() => {
+    fetchFeed();
+  }, []);
+
   const handleDocumentUpdate = () => {
-    fetchDocuments();
+    // fetchDocuments();
   };
 
   const handleDocumentDelete = (deletedId) => {
-    setDocuments((docs) => docs.filter((doc) => doc._id !== deletedId));
+    setActivities((docs) => docs.filter((doc) => doc._id !== deletedId));
   };
 
+  const handleCreateTeam = async (e) => {
+    e.preventDefault();
+    setTeamLoading(true);
+    setError("");
+    setSuccess("");
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BASE_URL}/api/user/create-team`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // if using JWT
+          },
+          body: JSON.stringify({
+            name: teamName,
+            userId: localStorage.getItem("userId"), // store userId at login
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to create team");
+      }
+
+      const data = await response.json();
+      setSuccess("Team created successfully!");
+      console.log("Created Team:", data);
+
+      setTeamName(""); // reset input
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setTeamLoading(false);
+    }
+  };
   return (
     <Layout>
       <div className="space-y-6">
@@ -116,23 +155,44 @@ const Dashboard = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">
-              Welcome back, {user?.name}
+              Welcome back, {user?.name || localStorage.getItem("name")}
             </h1>
             <p className="text-gray-600">
               Manage your knowledge documents and collaborate with your team
             </p>
           </div>
-          <Link
-            to="/documents/new"
+          {/* <Link
+            to="/team"
             className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
           >
             <PlusIcon className="h-4 w-4 mr-2" />
-            New Document
-          </Link>
+            Create Team
+          </Link> */}
         </div>
 
+        <form onSubmit={handleCreateTeam} className="space-y-4">
+          <input
+            type="text"
+            placeholder="Enter team name"
+            value={teamName}
+            onChange={(e) => setTeamName(e.target.value)}
+            className="w-full px-3 py-2 border rounded-md text-black"
+            required
+          />
+          <button
+            type="submit"
+            disabled={teamLoading}
+            className="w-full py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50"
+          >
+            {teamLoading ? "Creating..." : "Create Team"}
+          </button>
+        </form>
+
+        {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+        {success && <p className="mt-3 text-sm text-green-600">{success}</p>}
+
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <div className="flex items-center">
               <DocumentTextIcon className="h-8 w-8 text-indigo-600" />
@@ -168,7 +228,7 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Main content */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -186,7 +246,7 @@ const Dashboard = () => {
               </Link>
             </div>
 
-            {!loading ? (
+            {feedLoading ? (
               <div className="grid gap-6">
                 {[...Array(3)].map((_, i) => (
                   <div
@@ -199,28 +259,19 @@ const Dashboard = () => {
                   </div>
                 ))}
               </div>
-            ) : documents.length === 0 ? (
+            ) : activities?.length === 0 ? (
               <div className="text-center py-12 bg-white rounded-lg shadow-sm border border-gray-200">
                 <DocumentTextIcon className="mx-auto h-12 w-12 text-gray-400" />
                 <h3 className="mt-2 text-sm font-medium text-gray-900">
                   No documents
                 </h3>
                 <p className="mt-1 text-sm text-gray-500">
-                  Get started by creating your first document.
+                  You need to create a team before adding documents.
                 </p>
-                <div className="mt-6">
-                  <Link
-                    to="/documents/new"
-                    className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors"
-                  >
-                    <PlusIcon className="h-4 w-4 mr-2" />
-                    New Document
-                  </Link>
-                </div>
               </div>
             ) : (
               <div className="grid gap-6">
-                {documents.map((document) => (
+                {activities?.map((document) => (
                   <DocumentCard
                     key={document._id}
                     document={document}
@@ -234,7 +285,7 @@ const Dashboard = () => {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            <ActivityFeed />
+            <ActivityFeed loading={feedLoading} activities={activities} />
           </div>
         </div>
       </div>

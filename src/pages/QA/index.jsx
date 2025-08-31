@@ -11,8 +11,6 @@ import {
 const QA = () => {
   const [question, setQuestion] = useState("");
   const [conversations, setConversations] = useState([]);
-  const [tags, setTags] = useState([]);
-  const [showFilters, setShowFilters] = useState([]);
 
   const [loading, setLoading] = useState(false);
 
@@ -36,7 +34,20 @@ const QA = () => {
     setConversations((prev) => [newConversation, ...prev]);
 
     try {
-      const response = await aiAPI.askQuestion({ question: currentQuestion });
+      const res = await fetch(
+        `${
+          import.meta.env.VITE_BASE_URL
+        }/api/user/ask?userId=${localStorage.getItem("userId")}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question: currentQuestion }),
+        }
+      );
+
+      if (!res.ok) throw new Error("Failed to fetch");
+
+      const data = await res.json(); // ✅ parse JSON
 
       // Update conversation with answer
       setConversations((prev) =>
@@ -44,8 +55,7 @@ const QA = () => {
           conv.id === newConversation.id
             ? {
                 ...conv,
-                answer: response.data.answer,
-                documentsUsed: response.data.documentsUsed,
+                answer: data.result.answer, // ✅ use parsed data
                 loading: false,
               }
             : conv
@@ -88,8 +98,8 @@ const QA = () => {
         </div>
 
         {/* Question Form */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="bg-white rounded-lg shadow-sm border text-black border-gray-200 p-6">
+          <form onSubmit={handleSubmit} className="space-y-4 ">
             <div>
               <label
                 htmlFor="question"
@@ -121,13 +131,13 @@ const QA = () => {
         </div>
 
         {/* Conversations */}
-        {conversations.length > 0 && (
+        {conversations?.length > 0 && (
           <div className="space-y-6">
             <h2 className="text-lg font-medium text-gray-900">
               Conversation History
             </h2>
 
-            {conversations.map((conv) => (
+            {conversations?.map((conv) => (
               <div
                 key={conv.id}
                 className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
@@ -150,7 +160,7 @@ const QA = () => {
 
                 {/* Answer */}
                 <div className="px-6 py-4">
-                  {conv.loading ? (
+                  {conv?.loading ? (
                     <div className="flex items-center space-x-3">
                       <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-indigo-600" />
                       <p className="text-gray-600">AI is thinking...</p>
@@ -169,13 +179,6 @@ const QA = () => {
                             </p>
                           ))}
                         </div>
-                        {conv.documentsUsed && (
-                          <div className="mt-3 flex items-center text-xs text-gray-500">
-                            <DocumentTextIcon className="h-4 w-4 mr-1" />
-                            Answer based on {conv.documentsUsed} document
-                            {conv.documentsUsed !== 1 ? "s" : ""}
-                          </div>
-                        )}
                       </div>
                     </div>
                   )}
@@ -186,7 +189,7 @@ const QA = () => {
         )}
 
         {/* Empty state */}
-        {conversations.length === 0 && (
+        {conversations?.length === 0 && (
           <div className="text-center py-12 bg-white rounded-lg shadow-sm border border-gray-200">
             <SparklesIcon className="mx-auto h-12 w-12 text-gray-400" />
             <h3 className="mt-2 text-sm font-medium text-gray-900">
@@ -196,42 +199,6 @@ const QA = () => {
               Ask your first question to get AI-powered answers from your
               knowledge base
             </p>
-          </div>
-        )}
-
-        {/* Tag Filters */}
-        {showFilters && tags.length > 0 && (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-medium text-gray-900">
-                Filter by Tags
-              </h3>
-              {selectedTags.length > 0 && (
-                <button
-                  onClick={clearFilters}
-                  className="text-sm text-indigo-600 hover:text-indigo-500 transition-colors"
-                >
-                  Clear filters
-                </button>
-              )}
-            </div>
-
-            <div className="flex flex-wrap gap-2">
-              {tags.slice(0, 20).map((tag) => (
-                <button
-                  key={tag.name}
-                  onClick={() => handleTagToggle(tag.name)}
-                  className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-                    selectedTags.includes(tag.name)
-                      ? "bg-indigo-100 text-indigo-800 border border-indigo-200"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}
-                >
-                  {tag.name}
-                  <span className="ml-1 text-xs">({tag.count})</span>
-                </button>
-              ))}
-            </div>
           </div>
         )}
       </div>

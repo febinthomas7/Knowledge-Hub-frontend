@@ -16,69 +16,85 @@ import {
 
 const DocumentCard = ({ document, onUpdate, onDelete }) => {
   //   const { user } = useAuth();
-  const user = "";
+  const user = localStorage.getItem("userId");
   const [loading, setLoading] = useState(false);
   const [showVersions, setShowVersions] = useState(false);
 
-  const canEdit =
-    user?.role === "admin" || document.createdBy._id === user?._id;
-  const canDelete = canEdit;
+  const handleDelete = async (docId) => {
+    if (!window.confirm("Are you sure you want to delete this document?")) {
+      return;
+    }
 
-  //   const handleDelete = async () => {
-  //     if (!window.confirm("Are you sure you want to delete this document?")) {
-  //       return;
-  //     }
+    try {
+      const response = await fetch(
+        `${
+          import.meta.env.VITE_BASE_URL
+        }/api/user/document?docId=${docId}&userId=${localStorage.getItem(
+          "userId"
+        )}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // if auth needed
+          },
+        }
+      );
 
-  //     try {
-  //       await documentsAPI.delete(document._id);
-  //       toast.success("Document deleted successfully");
-  //       onDelete?.(document._id);
-  //     } catch (error) {
-  //       toast.error("Failed to delete document");
-  //     }
-  //   };
+      if (!response.ok) {
+        throw new Error("Failed to delete document");
+      }
 
-  //   const handleGenerateSummary = async () => {
-  //     setLoading(true);
-  //     try {
-  //       const response = await aiAPI.generateSummary({
-  //         title: document.title,
-  //         content: document.content,
-  //       });
+      onDelete(docId);
 
-  //       await documentsAPI.update(document._id, {
-  //         summary: response.data.summary,
-  //       });
+      alert("Document deleted successfully ✅");
+    } catch (error) {
+      console.error(error);
+      alert("Error deleting document ❌");
+    }
+  };
 
-  //       toast.success("Summary generated successfully");
-  //       onUpdate?.();
-  //     } catch (error) {
-  //       toast.error("Failed to generate summary");
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
+  const handleGenerateSummary = async () => {
+    setLoading(true);
+    // try {
+    //   const response = await aiAPI.generateSummary({
+    //     title: document.title,
+    //     content: document.content,
+    //   });
 
-  //   const handleGenerateTags = async () => {
-  //     setLoading(true);
-  //     try {
-  //       const response = await aiAPI.generateTags({
-  //         title: document.title,
-  //         content: document.content,
-  //       });
+    //   await documentsAPI.update(document._id, {
+    //     summary: response.data.summary,
+    //   });
 
-  //       const newTags = [...new Set([...document.tags, ...response.data.tags])];
+    //   toast.success("Summary generated successfully");
+    //   onUpdate?.();
+    // } catch (error) {
+    //   toast.error("Failed to generate summary");
+    // } finally {
+    //   setLoading(false);
+    // }
+  };
 
-  //       await documentsAPI.update(document._id, { tags: newTags });
+  const handleGenerateTags = async () => {
+    setLoading(true);
+    // try {
+    //   const response = await aiAPI.generateTags({
+    //     title: document.title,
+    //     content: document.content,
+    //   });
 
-  //       toast.success("Tags generated successfully");
-  //       onUpdate?.();
-  //     } catch (error) {
-  //       toast.error("Failed to generate tags");
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
+    //   const newTags = [...new Set([...document.tags, ...response.data.tags])];
+
+    //   await documentsAPI.update(document._id, { tags: newTags });
+
+    //   toast.success("Tags generated successfully");
+    //   onUpdate?.();
+    // } catch (error) {
+    //   toast.error("Failed to generate tags");
+    // } finally {
+    //   setLoading(false);
+    // }
+  };
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
@@ -87,7 +103,7 @@ const DocumentCard = ({ document, onUpdate, onDelete }) => {
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1">
             <Link
-              to={`/documents/${document._id}`}
+              to={`/teams/documents/${document._id}`}
               className="text-lg font-semibold text-gray-900 hover:text-indigo-600 transition-colors"
             >
               {document.title}
@@ -95,43 +111,46 @@ const DocumentCard = ({ document, onUpdate, onDelete }) => {
             <div className="flex items-center mt-2 text-sm text-gray-500 space-x-4">
               <div className="flex items-center">
                 <UserIcon className="h-4 w-4 mr-1" />
-                {document.createdBy.name}
+                {document.updatedBy.name}
               </div>
               <div className="flex items-center">
                 <CalendarIcon className="h-4 w-4 mr-1" />
                 {new Date(document.createdAt).toLocaleDateString()}
               </div>
-              <div className="flex items-center">
-                <EyeIcon className="h-4 w-4 mr-1" />
-                {document.viewCount || 0}
-              </div>
             </div>
           </div>
 
-          {canEdit && (
-            <div className="flex space-x-2">
-              <Link
-                to={`/documents/${document._id}/edit`}
-                className="text-gray-400 hover:text-indigo-600 transition-colors"
-              >
-                <PencilIcon className="h-5 w-5" />
-              </Link>
-              {canDelete && (
+          {/* Edit + Delete */}
+          <div className="flex space-x-2">
+            {(localStorage.getItem("role") === "admin" ||
+              user === document.createdBy._id) && (
+              <>
+                <Link
+                  to={`/teams/documents/${document._id}/edit`}
+                  className="text-gray-400 hover:text-indigo-600 transition-colors"
+                >
+                  <PencilIcon className="h-5 w-5" />
+                </Link>
                 <button
-                  onClick={handleDelete}
+                  onClick={() => handleDelete(document._id)}
                   className="text-gray-400 hover:text-red-600 transition-colors"
                 >
                   <TrashIcon className="h-5 w-5" />
                 </button>
-              )}
-            </div>
-          )}
+              </>
+            )}
+          </div>
         </div>
 
-        {/* Summary */}
-        {document.summary && (
-          <p className="text-gray-600 mb-4 line-clamp-3">{document.summary}</p>
+        {/* content */}
+        {document.content && (
+          <p className="text-gray-600 mb-4 line-clamp-3">{document.content}</p>
         )}
+
+        {/* Summary */}
+        {/* {document.summary && (
+          <p className="text-gray-600 mb-4 line-clamp-3">{document.summary}</p>
+        )} */}
 
         {/* Tags */}
         {document.tags && document.tags.length > 0 && (
@@ -156,37 +175,35 @@ const DocumentCard = ({ document, onUpdate, onDelete }) => {
         )}
 
         {/* AI Actions */}
-        {canEdit && (
-          <div className="flex flex-wrap gap-2 pt-4 border-t border-gray-100">
-            <button
-              onClick={handleGenerateSummary}
-              disabled={loading}
-              className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-indigo-700 bg-indigo-50 rounded-md hover:bg-indigo-100 transition-colors disabled:opacity-50"
-            >
-              <SparklesIcon className="h-3 w-3 mr-1" />
-              {loading ? "Generating..." : "Summarize with Gemini"}
-            </button>
+        <div className="flex flex-wrap gap-2 pt-4 border-t border-gray-100">
+          {/* <button
+            onClick={handleGenerateSummary}
+            disabled={loading}
+            className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-indigo-700 bg-indigo-50 rounded-md hover:bg-indigo-100 transition-colors disabled:opacity-50"
+          >
+            <SparklesIcon className="h-3 w-3 mr-1" />
+            {loading ? "Generating..." : "Summarize with Gemini"}
+          </button>
 
-            <button
-              onClick={handleGenerateTags}
-              disabled={loading}
-              className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-emerald-700 bg-emerald-50 rounded-md hover:bg-emerald-100 transition-colors disabled:opacity-50"
-            >
-              <TagIcon className="h-3 w-3 mr-1" />
-              {loading ? "Generating..." : "Generate Tags"}
-            </button>
+          <button
+            onClick={handleGenerateTags}
+            disabled={loading}
+            className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-emerald-700 bg-emerald-50 rounded-md hover:bg-emerald-100 transition-colors disabled:opacity-50"
+          >
+            <TagIcon className="h-3 w-3 mr-1" />
+            {loading ? "Generating..." : "Generate Tags"}
+          </button> */}
 
-            {document.versions && document.versions.length > 0 && (
-              <button
-                onClick={() => setShowVersions(!showVersions)}
-                className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-700 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors"
-              >
-                <DocumentTextIcon className="h-3 w-3 mr-1" />
-                History ({document.versions.length})
-              </button>
-            )}
-          </div>
-        )}
+          {document.versions && document.versions.length > 0 && (
+            <button
+              onClick={() => setShowVersions(!showVersions)}
+              className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-700 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors"
+            >
+              <DocumentTextIcon className="h-3 w-3 mr-1" />
+              History ({document.versions.length})
+            </button>
+          )}
+        </div>
 
         {/* Version History Modal */}
         {showVersions && (
@@ -204,14 +221,14 @@ const DocumentCard = ({ document, onUpdate, onDelete }) => {
                 </div>
                 <div className="p-6">
                   <div className="space-y-4">
-                    {document.versions.map((version, index) => (
+                    {document?.versions?.map((version, index) => (
                       <div
                         key={index}
                         className="border-l-2 border-indigo-200 pl-4"
                       >
                         <div className="flex items-center justify-between">
                           <p className="text-sm font-medium text-gray-900">
-                            Version {document.versions.length - index}
+                            Version {index + 1}
                           </p>
                           <p className="text-xs text-gray-500">
                             {new Date(version.editedAt).toLocaleString()}

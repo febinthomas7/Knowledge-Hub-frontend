@@ -6,6 +6,7 @@ import { useState, useContext } from "react";
 import { GoEye, GoEyeClosed } from "react-icons/go";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { Watch } from "../../Context";
+import { SparklesIcon } from "@heroicons/react/24/outline";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -38,19 +39,7 @@ const Login = () => {
 
       const result = await response.json();
 
-      const {
-        sucess,
-        message,
-        error,
-        jwtToken,
-        name,
-        email,
-        _id,
-        avatar,
-        memories,
-        albums,
-        bio,
-      } = result;
+      const { sucess, message, error, jwtToken, name, email, _id } = result;
       if (!sucess) {
         handleError(message);
         setIsBtn(false);
@@ -68,28 +57,8 @@ const Login = () => {
         localStorage.setItem("email", email);
         localStorage.setItem("userId", _id);
 
-        // fetchDeviceDetails();
-
-        if (!avatar === undefined || "undefined" || "") {
-          localStorage.setItem("avatar", avatar);
-          setAvatarUrl(avatar);
-        }
-
-        if (!bio == undefined || "undefined" || "") {
-          localStorage.setItem("bio", bio);
-          setBio(bio);
-        }
-
-        if (!memories === undefined || "undefined" || "") {
-          localStorage.setItem("memories", memories);
-        }
-
-        if (!albums === undefined || "undefined" || "") {
-          localStorage.setItem("albums", albums);
-        }
-
         setTimeout(() => {
-          navigate("/");
+          navigate("/dashboard");
           setIsBtn(true);
         }, 1000);
       } else if (error) {
@@ -102,11 +71,7 @@ const Login = () => {
     }
   };
   return (
-    <div className="z-10 w-full h-svh flex justify-center items-center    bg-no-repeat bg-center bg-cover bg-[url('/coverpage.png')] aspect-video">
-      {/* <Helmet>
-        <title>Login - Flexifyy</title>
-        <meta name="description" content="user login page" />
-      </Helmet> */}
+    <div className="z-10 w-full h-svh flex justify-center items-center  bg-black">
       <div className=" w-full h-svh flex justify-center items-center  fixed z-10"></div>
       <header
         className={` text-white sm:px-10 sm:py-2 z-40 flex top-0 justify-between fixed w-full  items-center duration-75 ease-in`}
@@ -115,8 +80,16 @@ const Login = () => {
       <div className="flex justify-center text-black items-center w-full h-full z-40  backdrop-blur-[2px]">
         <div className="bg-[#ffffff] p-8 rounded-lg shadow-lg w-full  max-w-md relative mx-5 ">
           <Link to="/">
-            <div className="logo   flex justify-center items-center">
-              <img src="full_logo.png" alt="" className="w-40 h-15" />
+            <div className="text-center">
+              <div className="flex justify-center">
+                <SparklesIcon className="h-12 w-12 text-indigo-600" />
+              </div>
+              <h2 className="mt-6 text-3xl font-bold text-gray-900">
+                Welcome back
+              </h2>
+              <p className="mt-2 text-sm text-gray-600">
+                Sign in to your Knowledge Hub account
+              </p>
             </div>
           </Link>
           <form onSubmit={handleSubmit}>
@@ -189,8 +162,8 @@ const Login = () => {
             <div>
               <p className="text-gray-400 mt-4">
                 Don't have an account?{" "}
-                <Link to="/signin" className="text-[#ff4522] hover:underline">
-                  Sign In
+                <Link to="/register" className="text-[#ff4522] hover:underline">
+                  Register
                 </Link>
               </p>
             </div>

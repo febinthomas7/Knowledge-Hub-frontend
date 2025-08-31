@@ -10,25 +10,12 @@ import {
 
 const Search = () => {
   const [query, setQuery] = useState("");
-  const [searchType, setSearchType] = useState("text");
   const [documents, setDocuments] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [searchType, setSearchType] = useState("text");
   const [tags, setTags] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
-
-  //   useEffect(() => {
-  //     fetchTags();
-  //   }, []);
-
-  //   const fetchTags = async () => {
-  //     try {
-  //       const response = await searchAPI.getTags();
-  //       setTags(response.data.tags);
-  //     } catch (error) {
-  //       console.error('Failed to fetch tags:', error);
-  //     }
-  //   };
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -36,14 +23,23 @@ const Search = () => {
 
     setLoading(true);
     try {
-      const params = {
-        q: query,
-        type: searchType,
-        ...(selectedTags.length > 0 && { tags: selectedTags.join(",") }),
-      };
+      const response = await fetch(
+        `${
+          import.meta.env.VITE_BASE_URL
+        }/api/user/search?userId=${localStorage.getItem("userId")}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            query,
+            mode: searchType,
+          }),
+        }
+      );
 
-      const response = await searchAPI.search(params);
-      setDocuments(response.data.documents);
+      const data = await response.json();
+      setDocuments(data.results);
+      setTags(data?.results[0]?.tags);
     } catch (error) {
       console.error("Search failed:", error);
     } finally {
@@ -64,7 +60,6 @@ const Search = () => {
     setQuery("");
     setDocuments([]);
   };
-
   return (
     <Layout>
       <div className="space-y-6">
@@ -93,7 +88,7 @@ const Search = () => {
                 </div>
               </div>
 
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 text-black">
                 <select
                   value={searchType}
                   onChange={(e) => setSearchType(e.target.value)}
@@ -110,7 +105,6 @@ const Search = () => {
                 >
                   <FunnelIcon className="h-5 w-5" />
                 </button>
-
                 <button
                   type="submit"
                   disabled={loading || !query.trim()}
@@ -138,8 +132,6 @@ const Search = () => {
               )}
             </div>
           </form>
-
-          {/* Filters */}
           {showFilters && (
             <div className="mt-6 pt-6 border-t border-gray-200">
               <div className="flex items-center justify-between mb-4">
@@ -157,19 +149,18 @@ const Search = () => {
               </div>
 
               <div className="flex flex-wrap gap-2">
-                {tags.slice(0, 20).map((tag) => (
+                {tags?.slice(0, 10)?.map((tag, index) => (
                   <button
-                    key={tag.name}
+                    key={index}
                     type="button"
-                    onClick={() => handleTagToggle(tag.name)}
+                    onClick={() => handleTagToggle(tag)}
                     className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-                      selectedTags.includes(tag.name)
+                      selectedTags.includes(tag)
                         ? "bg-indigo-100 text-indigo-800 border border-indigo-200"
                         : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                     }`}
                   >
-                    {tag.name}
-                    <span className="ml-1 text-xs">({tag.count})</span>
+                    {tag}
                   </button>
                 ))}
               </div>
@@ -178,13 +169,13 @@ const Search = () => {
         </div>
 
         {/* Results */}
-        {documents.length > 0 && (
+        {documents?.length > 0 && (
           <div>
             <h2 className="text-lg font-medium text-gray-900 mb-4">
-              Search Results ({documents.length})
+              Search Results ({documents?.length})
             </h2>
             <div className="grid gap-6">
-              {documents.map((document) => (
+              {documents?.map((document) => (
                 <DocumentCard
                   key={document._id}
                   document={document}
@@ -199,7 +190,7 @@ const Search = () => {
         )}
 
         {/* Empty state */}
-        {!loading && documents.length === 0 && query && (
+        {!loading && documents?.length === 0 && query && (
           <div className="text-center py-12 bg-white rounded-lg shadow-sm border border-gray-200">
             <MagnifyingGlassIcon className="mx-auto h-12 w-12 text-gray-400" />
             <h3 className="mt-2 text-sm font-medium text-gray-900">

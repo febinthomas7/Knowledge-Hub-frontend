@@ -34,26 +34,33 @@ const fakeActivities = [
   },
 ];
 
-const ActivityFeed = () => {
-  const [activities, setActivities] = useState(fakeActivities);
-  const [loading, setLoading] = useState(true);
+const ActivityFeed = ({ activities, loading }) => {
+  // const fetchFeed = async () => {
+  //   try {
+  //     const response = await fetch(
+  //       `${
+  //         import.meta.env.VITE_BASE_URL
+  //       }/api/user/feed?userId=${localStorage.getItem("userId")}`,
+  //       {
+  //         method: "GET",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     );
+  //     const data = await response.json();
+  //     setActivities(data);
+  //   } catch (error) {
+  //     console.error("Failed to fetch activity:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
-  //   useEffect(() => {
-  //     fetchActivity();
-  //   }, []);
-
-  //   const fetchActivity = async () => {
-  //     try {
-  //       const response = await documentsAPI.getActivity();
-  //       setActivities(response.data.recentActivity);
-  //     } catch (error) {
-  //       console.error('Failed to fetch activity:', error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  if (!loading) {
+  // useEffect(() => {
+  //   fetchFeed();
+  // }, []);
+  if (loading) {
     return (
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <h3 className="text-lg font-medium text-gray-900 mb-4">
@@ -83,24 +90,24 @@ const ActivityFeed = () => {
         </h3>
       </div>
 
-      {activities.length === 0 ? (
+      {activities?.length === 0 ? (
         <p className="text-gray-500 text-sm">No recent activity</p>
       ) : (
         <div className="space-y-4">
-          {activities.map((activity) => (
-            <div key={activity._id} className="flex items-start space-x-3">
+          {activities?.map((activity, index) => (
+            <div key={index} className="flex items-start space-x-3">
               <div className="flex-shrink-0">
                 <DocumentTextIcon className="h-5 w-5 text-indigo-600" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm text-gray-900">
                   <span className="font-medium">
-                    {activity.lastEditedBy?.name}
+                    {activity?.updatedBy?.name}
                   </span>{" "}
-                  updated <span className="font-medium">{activity.title}</span>
+                  updated <span className="font-medium">{activity?.title}</span>
                 </p>
                 <p className="text-xs text-gray-500">
-                  {new Date(activity.updatedAt).toLocaleString()}
+                  {new Date(activity?.updatedAt).toLocaleString()}
                 </p>
               </div>
             </div>
