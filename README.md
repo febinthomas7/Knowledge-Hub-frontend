@@ -84,7 +84,7 @@ VITE_BASE_URL=http://localhost:5000
 **Backend (`.env`):**
 
 ```bash
-MONGODB_URI=mongodb+srv://tfebin54_db_user:DLaZ3Q1kdNNcu39R@hub.k2qpj6n.mongodb.net/?retryWrites=true&w=majority&appName=hub
+MONGODB_URI=uri
 PORT=5000
 NODE_ENV=development
 CORS_ORIGINS=http://localhost:5173
