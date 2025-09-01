@@ -14,10 +14,8 @@ import {
 } from "@heroicons/react/24/outline";
 // import toast from 'react-hot-toast';
 
-const DocumentCard = ({ document, onUpdate, onDelete }) => {
-  //   const { user } = useAuth();
+const DocumentCard = ({ document, onDelete }) => {
   const user = localStorage.getItem("userId");
-  const [loading, setLoading] = useState(false);
   const [showVersions, setShowVersions] = useState(false);
 
   const handleDelete = async (docId) => {
@@ -54,48 +52,6 @@ const DocumentCard = ({ document, onUpdate, onDelete }) => {
     }
   };
 
-  const handleGenerateSummary = async () => {
-    setLoading(true);
-    // try {
-    //   const response = await aiAPI.generateSummary({
-    //     title: document.title,
-    //     content: document.content,
-    //   });
-
-    //   await documentsAPI.update(document._id, {
-    //     summary: response.data.summary,
-    //   });
-
-    //   toast.success("Summary generated successfully");
-    //   onUpdate?.();
-    // } catch (error) {
-    //   toast.error("Failed to generate summary");
-    // } finally {
-    //   setLoading(false);
-    // }
-  };
-
-  const handleGenerateTags = async () => {
-    setLoading(true);
-    // try {
-    //   const response = await aiAPI.generateTags({
-    //     title: document.title,
-    //     content: document.content,
-    //   });
-
-    //   const newTags = [...new Set([...document.tags, ...response.data.tags])];
-
-    //   await documentsAPI.update(document._id, { tags: newTags });
-
-    //   toast.success("Tags generated successfully");
-    //   onUpdate?.();
-    // } catch (error) {
-    //   toast.error("Failed to generate tags");
-    // } finally {
-    //   setLoading(false);
-    // }
-  };
-
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
       <div className="p-6">
@@ -122,8 +78,9 @@ const DocumentCard = ({ document, onUpdate, onDelete }) => {
 
           {/* Edit + Delete */}
           <div className="flex space-x-2">
-            {(localStorage.getItem("role") === "admin" ||
-              user === document.createdBy._id) && (
+            {(user === document.updatedBy._id ||
+              user === document.createdBy ||
+              localStorage.getItem("role") === "admin") && (
               <>
                 <Link
                   to={`/teams/documents/${document._id}/edit`}
@@ -146,11 +103,6 @@ const DocumentCard = ({ document, onUpdate, onDelete }) => {
         {document.content && (
           <p className="text-gray-600 mb-4 line-clamp-3">{document.content}</p>
         )}
-
-        {/* Summary */}
-        {/* {document.summary && (
-          <p className="text-gray-600 mb-4 line-clamp-3">{document.summary}</p>
-        )} */}
 
         {/* Tags */}
         {document.tags && document.tags.length > 0 && (
@@ -176,24 +128,6 @@ const DocumentCard = ({ document, onUpdate, onDelete }) => {
 
         {/* AI Actions */}
         <div className="flex flex-wrap gap-2 pt-4 border-t border-gray-100">
-          {/* <button
-            onClick={handleGenerateSummary}
-            disabled={loading}
-            className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-indigo-700 bg-indigo-50 rounded-md hover:bg-indigo-100 transition-colors disabled:opacity-50"
-          >
-            <SparklesIcon className="h-3 w-3 mr-1" />
-            {loading ? "Generating..." : "Summarize with Gemini"}
-          </button>
-
-          <button
-            onClick={handleGenerateTags}
-            disabled={loading}
-            className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-emerald-700 bg-emerald-50 rounded-md hover:bg-emerald-100 transition-colors disabled:opacity-50"
-          >
-            <TagIcon className="h-3 w-3 mr-1" />
-            {loading ? "Generating..." : "Generate Tags"}
-          </button> */}
-
           {document.versions && document.versions.length > 0 && (
             <button
               onClick={() => setShowVersions(!showVersions)}

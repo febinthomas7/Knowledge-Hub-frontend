@@ -53,7 +53,7 @@ function ResetPassword() {
             id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-3 rounded mb-4 bg-[#39393938] outline outline-white text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+            className="w-full p-3 rounded mb-4 bg-[#39393938] outline outline-white text-white focus:outline-none focus:ring-2 focus:ring-indigo-600"
             placeholder="Enter your email"
             required
           />
@@ -66,7 +66,7 @@ function ResetPassword() {
             id="otp"
             value={otp}
             onChange={(e) => setOtp(e.target.value)}
-            className="w-full p-3 rounded mb-4 bg-[#39393938] outline outline-white text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+            className="w-full p-3 rounded mb-4 bg-[#39393938] outline outline-white text-white focus:outline-none focus:ring-2 focus:ring-indigo-600"
             placeholder="Enter OTP"
             required
           />
@@ -81,7 +81,7 @@ function ResetPassword() {
                 name="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full  p-3 rounded bg-[#39393938] outline outline-white text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+                className="w-full  p-3 rounded bg-[#39393938] outline outline-white text-white focus:outline-none focus:ring-2 focus:ring-indigo-600"
                 placeholder="Password"
                 required
               />
@@ -100,9 +100,9 @@ function ResetPassword() {
             disabled={loading}
             className={`w-full  ${
               !loading
-                ? "hover:scale-105 bg-[#ff4522]"
-                : "bg-[#ff4522] cursor-not-allowed"
-            }  duration-100 ease-in text-white font-bold py-3 rounded focus:outline-none focus:ring-2 focus:ring-red-500`}
+                ? "hover:scale-105 bg-indigo-600"
+                : "bg-indigo-600 cursor-not-allowed"
+            }  duration-100 ease-in text-white font-bold py-3 rounded focus:outline-none focus:ring-2 focus:ring-indigo-600`}
           >
             {loading ? "Verifying..." : "Reset Password"}
           </button>
@@ -112,7 +112,7 @@ function ResetPassword() {
           <p className="text-gray-400 mt-4 text-right">
             <Link
               to="/request_reset"
-              className="text-[#ff4522] hover:underline"
+              className="text-indigo-600 hover:underline"
             >
               Go Back
             </Link>

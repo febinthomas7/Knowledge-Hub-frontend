@@ -16,6 +16,7 @@ const Search = () => {
   const [tags, setTags] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
+  const [allDocuments, setAllDocuments] = useState([]); // full list
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -39,27 +40,42 @@ const Search = () => {
 
       const data = await response.json();
       setDocuments(data.results);
-      setTags(data?.results[0]?.tags);
+      setAllDocuments(data.results);
+      const allTags = Array.from(
+        new Set(data?.results[0]?.tags.flatMap((doc) => doc))
+      )
+        .sort(() => 0.5 - Math.random()) // shuffle
+        .slice(0, 10); // pick first 10 after shuffle
+
+      setTags(allTags);
     } catch (error) {
       console.error("Search failed:", error);
     } finally {
       setLoading(false);
     }
   };
-
   const handleTagToggle = (tagName) => {
-    setSelectedTags((prev) =>
-      prev.includes(tagName)
-        ? prev.filter((t) => t !== tagName)
-        : [...prev, tagName]
-    );
+    const updatedTags = selectedTags.includes(tagName)
+      ? selectedTags.filter((t) => t !== tagName)
+      : [...selectedTags, tagName];
+
+    setSelectedTags(updatedTags);
+
+    if (updatedTags.length > 0) {
+      const filtered = allDocuments.filter((doc) =>
+        doc.tags.some((tag) => updatedTags.includes(tag))
+      );
+      setDocuments(filtered);
+    } else {
+      setDocuments(allDocuments); // restore all
+    }
   };
 
   const clearFilters = () => {
     setSelectedTags([]);
-    setQuery("");
-    setDocuments([]);
+    setDocuments(allDocuments);
   };
+
   return (
     <Layout>
       <div className="space-y-6">
@@ -74,7 +90,7 @@ const Search = () => {
         {/* Search Form */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <form onSubmit={handleSearch} className="space-y-4">
-            <div className="flex gap-4">
+            <div className="  flex flex-col sm:flex-row gap-4">
               <div className="flex-1">
                 <div className="relative">
                   <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -138,7 +154,7 @@ const Search = () => {
                 <h3 className="text-sm font-medium text-gray-900">
                   Filter by Tags
                 </h3>
-                {selectedTags.length > 0 && (
+                {selectedTags?.length > 0 && (
                   <button
                     onClick={clearFilters}
                     className="text-sm text-indigo-600 hover:text-indigo-500 transition-colors"
@@ -149,7 +165,7 @@ const Search = () => {
               </div>
 
               <div className="flex flex-wrap gap-2">
-                {tags?.slice(0, 10)?.map((tag, index) => (
+                {tags?.map((tag, index) => (
                   <button
                     key={index}
                     type="button"
@@ -174,12 +190,11 @@ const Search = () => {
             <h2 className="text-lg font-medium text-gray-900 mb-4">
               Search Results ({documents?.length})
             </h2>
-            <div className="grid gap-6">
+            <div className="grid grid-cols-1 gap-6">
               {documents?.map((document) => (
                 <DocumentCard
                   key={document._id}
                   document={document}
-                  onUpdate={() => handleSearch({ preventDefault: () => {} })}
                   onDelete={(id) =>
                     setDocuments((docs) => docs.filter((doc) => doc._id !== id))
                   }

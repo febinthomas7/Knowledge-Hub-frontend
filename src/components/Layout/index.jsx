@@ -10,6 +10,7 @@ import {
   Bars3Icon,
   XMarkIcon,
   SparklesIcon,
+  PercentBadgeIcon,
 } from "@heroicons/react/24/outline";
 
 const Layout = ({ children }) => {
@@ -22,9 +23,8 @@ const Layout = ({ children }) => {
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: DocumentTextIcon },
     { name: "Search", href: "/search", icon: MagnifyingGlassIcon },
-    // { name: "Add Document", href: "/documents/new", icon: PlusIcon },
     { name: "AI Q&A", href: "/qa", icon: SparklesIcon },
-    { name: "Teams", href: "/team", icon: SparklesIcon },
+    { name: "Teams", href: "/team", icon: PercentBadgeIcon },
   ];
 
   const logout = () => {
@@ -43,14 +43,14 @@ const Layout = ({ children }) => {
         }`}
       >
         <div
-          className="fixed inset-0 bg-gray-600 bg-opacity-75"
+          className="fixed inset-0 bg-[#0000008a] bg-opacity-75"
           onClick={() => setSidebarOpen(false)}
         />
         <div className="fixed inset-y-0 left-0 flex w-64 flex-col bg-white shadow-xl">
           <div className="flex h-16 items-center justify-between px-4">
             <h1 className="text-xl font-bold text-gray-900">Knowledge Hub</h1>
             <button onClick={() => setSidebarOpen(false)}>
-              <XMarkIcon className="h-6 w-6" />
+              <XMarkIcon className="h-6 w-6 text-black" />
             </button>
           </div>
           <nav className="flex-1 space-y-1 px-2 py-4">

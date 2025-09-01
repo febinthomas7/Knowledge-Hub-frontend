@@ -121,7 +121,7 @@ const Register = () => {
                 type="name"
                 id="name"
                 name="name"
-                className="w-full p-3 rounded bg-[#39393938] outline outline-white  focus:outline-none focus:ring-2 focus:ring-[#ff4522]"
+                className="w-full p-3 rounded bg-[#39393938] outline outline-white  focus:outline-none focus:ring-2 focus:ring-indigo-600"
                 placeholder="Name"
                 required
               />
@@ -134,7 +134,7 @@ const Register = () => {
                 type="email"
                 id="email"
                 name="email"
-                className="w-full p-3 rounded bg-[#39393938] outline outline-white  focus:outline-none focus:ring-2 focus:ring-[#ff4522]"
+                className="w-full p-3 rounded bg-[#39393938] outline outline-white  focus:outline-none focus:ring-2 focus:ring-indigo-600"
                 placeholder="Email"
                 required
               />
@@ -148,7 +148,7 @@ const Register = () => {
                   type={pswd ? "password" : "text"}
                   id="password"
                   name="password"
-                  className="w-full  p-3 rounded bg-[#39393938] outline outline-white focus:outline-none focus:ring-2 focus:ring-[#ff4522]"
+                  className="w-full  p-3 rounded bg-[#39393938] outline outline-white focus:outline-none focus:ring-2 focus:ring-indigo-600"
                   placeholder="Password"
                   required
                 />
@@ -165,8 +165,8 @@ const Register = () => {
               type="submit"
               className={`w-full  ${
                 !isBtn
-                  ? "hover:scale-105 bg-[#ff4522]"
-                  : "bg-[#ff4522] cursor-not-allowed"
+                  ? "hover:scale-105 bg-indigo-600"
+                  : "bg-indigo-600 cursor-not-allowed"
               }  duration-100 ease-in text-white cursor-pointer font-bold py-3 flex justify-center items-center rounded focus:outline-none focus:ring-2 focus:ring-red-500`}
             >
               {Loading ? (
@@ -184,7 +184,7 @@ const Register = () => {
             <div>
               <p className="text-gray-400 mt-4">
                 already have an account?{" "}
-                <Link to="/login" className="text-[#ff4522] hover:underline">
+                <Link to="/login" className="text-indigo-600 hover:underline">
                   Login
                 </Link>
               </p>

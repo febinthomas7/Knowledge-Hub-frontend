@@ -14,7 +14,7 @@ const Login = () => {
   const [pswd, setPswd] = useState(true);
   const [Loading, setLoading] = useState(false);
   const [isWait, setIsWait] = useState(false);
-  const { setEmail, setUserName, setAvatarUrl, setBio } = useContext(Watch);
+  const { setEmail, setUserName } = useContext(Watch);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -101,7 +101,7 @@ const Login = () => {
                 type="email"
                 id="email"
                 name="email"
-                className="w-full p-3 rounded bg-[#39393938] outline outline-white  focus:outline-none focus:ring-2 focus:ring-[#ff4522]"
+                className="w-full p-3 rounded bg-[#39393938] outline outline-white  focus:outline-none focus:ring-2 focus:ring-indigo-600"
                 placeholder="Email"
                 required
               />
@@ -115,7 +115,7 @@ const Login = () => {
                   type={pswd ? "password" : "text"}
                   id="password"
                   name="password"
-                  className="w-full  p-3 rounded bg-[#39393938] outline outline-white  focus:outline-none focus:ring-2 focus:ring-[#ff4522]"
+                  className="w-full  p-3 rounded bg-[#39393938] outline outline-white  focus:outline-none focus:ring-2 focus:ring-indigo-600"
                   placeholder="Password"
                   required
                 />
@@ -133,8 +133,8 @@ const Login = () => {
               disabled={isBtn}
               className={`w-full  ${
                 !isBtn
-                  ? "hover:scale-105 bg-[#ff4522] cursor-pointer"
-                  : "bg-[#ff4522] cursor-not-allowed"
+                  ? "hover:scale-105 bg-indigo-600 cursor-pointer"
+                  : "bg-indigo-600 cursor-not-allowed"
               }  duration-100 ease-in text-white font-bold py-3 flex justify-center items-center rounded focus:outline-none focus:ring-2 focus:ring-red-500`}
             >
               {Loading ? (
@@ -153,7 +153,7 @@ const Login = () => {
               <p className="text-gray-400 mt-4 text-right">
                 <Link
                   to="/request_reset"
-                  className="text-[#ff4522]  hover:underline"
+                  className="text-indigo-600  hover:underline"
                 >
                   forget password?
                 </Link>
@@ -162,7 +162,10 @@ const Login = () => {
             <div>
               <p className="text-gray-400 mt-4">
                 Don't have an account?{" "}
-                <Link to="/register" className="text-[#ff4522] hover:underline">
+                <Link
+                  to="/register"
+                  className="text-indigo-600 hover:underline"
+                >
                   Register
                 </Link>
               </p>

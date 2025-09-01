@@ -54,7 +54,7 @@ const RequestReset = () => {
             id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-3 rounded mb-4 bg-[#39393938] outline outline-white text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+            className="w-full p-3 rounded mb-4 bg-[#39393938] outline outline-white text-white focus:outline-none focus:ring-2 focus:ring-indigo-600"
             placeholder="Enter your email"
             required
           />
@@ -64,9 +64,9 @@ const RequestReset = () => {
             disabled={loading}
             className={`w-full  ${
               !loading
-                ? "hover:scale-105 bg-[#ff4522]"
-                : "bg-[#ff4522] cursor-not-allowed"
-            }  duration-100 ease-in text-white font-bold py-3 rounded focus:outline-none focus:ring-2 focus:ring-red-500`}
+                ? "hover:scale-105 bg-indigo-600"
+                : "bg-indigo-600 cursor-not-allowed"
+            }  duration-100 ease-in text-white font-bold py-3 rounded focus:outline-none focus:ring-2 focus:ring-indigo-600`}
           >
             {loading ? "Sending..." : "Request OTP"}
           </button>
@@ -74,7 +74,7 @@ const RequestReset = () => {
 
         <div>
           <p className="text-gray-400 mt-4 text-right">
-            <Link to="/login" className="text-[#ff4522]  hover:underline">
+            <Link to="/login" className="text-indigo-600  hover:underline">
               Go Back
             </Link>
           </p>

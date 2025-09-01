@@ -304,17 +304,19 @@ const DocumentForm = () => {
               </div>
             )}
 
-            <div className="mb-6 flex flex-wrap gap-3">
-              <button
-                type="button"
-                onClick={handleGenerateAITags}
-                disabled={aiTagLoading || !formData.content}
-                className="inline-flex items-center px-4 py-2 text-sm font-medium text-emerald-700 bg-emerald-50 rounded-md hover:bg-emerald-100 transition-colors disabled:opacity-50"
-              >
-                <TagIcon className="h-4 w-4 mr-2" />
-                {aiTagLoading ? "Generating..." : "Generate AI Tags"}
-              </button>
-            </div>
+            {isEditing && (
+              <div className="mb-6 flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={handleGenerateAITags}
+                  disabled={aiTagLoading || !formData.content}
+                  className="inline-flex items-center px-4 py-2 text-sm font-medium text-emerald-700 bg-emerald-50 rounded-md hover:bg-emerald-100 transition-colors disabled:opacity-50"
+                >
+                  <TagIcon className="h-4 w-4 mr-2" />
+                  {aiTagLoading ? "Generating..." : "Generate AI Tags"}
+                </button>
+              </div>
+            )}
 
             {isEditing && (
               <div className="mb-6">
@@ -336,17 +338,21 @@ const DocumentForm = () => {
                 />
               </div>
             )}
-            <div className="mb-6 flex flex-wrap gap-3">
-              <button
-                type="button"
-                onClick={handleGenerateAISummary}
-                disabled={aiSummaryLoading || !formData.content}
-                className="inline-flex items-center px-4 py-2 text-sm font-medium text-indigo-700 bg-indigo-50 rounded-md hover:bg-indigo-100 transition-colors disabled:opacity-50"
-              >
-                <SparklesIcon className="h-4 w-4 mr-2" />
-                {aiSummaryLoading ? "Generating..." : "Generate AI Summary"}
-              </button>
-            </div>
+
+            {isEditing && (
+              <div className="mb-6 flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={handleGenerateAISummary}
+                  disabled={aiSummaryLoading || !formData.content}
+                  className="inline-flex items-center px-4 py-2 text-sm font-medium text-indigo-700 bg-indigo-50 rounded-md hover:bg-indigo-100 transition-colors disabled:opacity-50"
+                >
+                  <SparklesIcon className="h-4 w-4 mr-2" />
+                  {aiSummaryLoading ? "Generating..." : "Generate AI Summary"}
+                </button>
+              </div>
+            )}
+
             {/* Actions */}
             <div className="flex justify-end space-x-3">
               <button
