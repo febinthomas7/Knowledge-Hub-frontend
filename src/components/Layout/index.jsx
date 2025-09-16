@@ -4,13 +4,13 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   DocumentTextIcon,
   MagnifyingGlassIcon,
-  PlusIcon,
   UserCircleIcon,
   ArrowRightOnRectangleIcon,
   Bars3Icon,
   XMarkIcon,
   SparklesIcon,
   PercentBadgeIcon,
+  DocumentCheckIcon,
 } from "@heroicons/react/24/outline";
 
 const Layout = ({ children }) => {
@@ -25,6 +25,7 @@ const Layout = ({ children }) => {
     { name: "Search", href: "/search", icon: MagnifyingGlassIcon },
     { name: "AI Q&A", href: "/qa", icon: SparklesIcon },
     { name: "Teams", href: "/team", icon: PercentBadgeIcon },
+    { name: "Doc editor", href: "/docs", icon: DocumentCheckIcon },
   ];
 
   const logout = () => {
@@ -35,7 +36,7 @@ const Layout = ({ children }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       {/* Mobile sidebar */}
       <div
         className={`fixed inset-0 z-50 lg:hidden ${
@@ -73,6 +74,24 @@ const Layout = ({ children }) => {
               );
             })}
           </nav>
+          <div className="border-t border-gray-200 p-4">
+            <div className="flex items-center">
+              <UserCircleIcon className="h-8 w-8 text-gray-400" />
+              <div className="ml-3 flex-1">
+                <p className="text-sm font-medium text-gray-700">
+                  {user?.name}
+                </p>
+                <p className="text-xs text-gray-500 capitalize">{user?.role}</p>
+              </div>
+              <button
+                onClick={logout}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+                title="Logout"
+              >
+                <ArrowRightOnRectangleIcon className="h-5 w-5" />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 

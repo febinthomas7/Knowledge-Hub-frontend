@@ -1,7 +1,4 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
-import { lazy } from "react";
-import React, { useState, useRef, useContext } from "react";
-import { Watch } from "../Context";
 
 import NotFound from "../pages/NotFound";
 
@@ -16,6 +13,8 @@ import Register from "../pages/Register";
 import Home from "../pages/Home";
 import DocumentView from "../pages/DocumentView";
 import Team from "../pages/Team";
+import Docs from "../pages/Docs";
+import DocEditor from "../pages/DocEditor";
 const PrivateRoute = ({ children }) => {
   const isAuthenticated = localStorage.getItem("token");
   return isAuthenticated ? children : <Navigate to="/login" replace={true} />;
@@ -89,6 +88,14 @@ const router = createBrowserRouter([
     ),
   },
   {
+    path: "/doc/:id",
+    element: (
+      <PrivateRoute>
+        <DocEditor />
+      </PrivateRoute>
+    ),
+  },
+  {
     path: "/qa",
     element: (
       <PrivateRoute>
@@ -109,6 +116,14 @@ const router = createBrowserRouter([
     element: (
       <PrivateRoute>
         <Search />
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "/docs",
+    element: (
+      <PrivateRoute>
+        <Docs />
       </PrivateRoute>
     ),
   },
