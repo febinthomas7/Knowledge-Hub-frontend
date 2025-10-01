@@ -176,7 +176,7 @@ const DocumentForm = () => {
             import.meta.env.VITE_BASE_URL
           }/api/user/document?team=${teamId}&userId=${localStorage.getItem(
             "userId"
-          )}`,
+          )}&role=${localStorage.getItem("role")}`,
           {
             method: "POST",
             headers: {

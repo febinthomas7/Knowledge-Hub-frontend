@@ -78,9 +78,9 @@ const DocumentCard = ({ document, onDelete }) => {
 
           {/* Edit + Delete */}
           <div className="flex space-x-2">
-            {(user === document.updatedBy._id ||
-              user === document.createdBy ||
-              localStorage.getItem("role") === "admin") && (
+            {document?.permissions?.some(
+              (member) => member.userId === user
+            ) && (
               <>
                 <Link
                   to={`/teams/documents/${document._id}/edit`}
