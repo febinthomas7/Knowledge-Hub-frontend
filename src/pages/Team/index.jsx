@@ -8,6 +8,7 @@ const Team = () => {
   const [teamId, setTeamId] = useState(0);
   const [teams, setTeams] = useState([]);
   const [email, setEmail] = useState("");
+  const [teamLoading, setTeamLoading] = useState(true);
 
   const fetchTeams = async () => {
     try {
@@ -29,6 +30,8 @@ const Team = () => {
       setTeams(data); // save in state
     } catch (err) {
       console.error(err);
+    } finally {
+      setTeamLoading(false);
     }
   };
 
@@ -121,21 +124,40 @@ const Team = () => {
     <Layout>
       <div className="flex flex-col sm:flex-row gap-6 items-start text-black">
         {/* Teams List - Left Sidebar */}
-        <div className="w-full sm:w-64 bg-white shadow rounded-lg p-4  ">
-          <h2 className="text-lg font-semibold mb-4">My Teams</h2>
-          <ul className="divide-y divide-gray-200">
+        <div className="w-full sm:w-64 bg-[var(--color-bg-2)] shadow rounded-lg p-4  ">
+          <h2 className="text-lg text-[var(--text-color)] font-semibold mb-4">
+            My Teams
+          </h2>
+          <ul className="flex flex-col gap-2 ">
+            {teamLoading && (
+              <div className=" grid gap-3">
+                {[...Array(3)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="bg-[var(--color-bg-2)] flex gap-1 rounded-lg shadow-sm border border-gray-200 p-3 animate-pulse"
+                  >
+                    <div className="h-4 bg-gray-200 rounded w-3/4 " />
+                    {/* <div className="h-3 bg-gray-200 rounded w-full mb-2" /> */}
+                    <div className="h-4 bg-gray-200 rounded w-1/3" />
+                  </div>
+                ))}
+              </div>
+            )}
+
             {teams?.map((team) => (
               <li
                 key={team._id}
-                className={`py-2 px-2 cursor-pointer rounded-md hover:bg-gray-50 ${
-                  teamId === team._id ? "bg-indigo-50" : ""
+                className={`py-2 px-2 cursor-pointer rounded-md  ${
+                  teamId === team._id
+                    ? " bg-[var(--nav-button-active-bg)] text-[var(--nav-button-active-text)] "
+                    : " text-[var(--nav-button-text)] hover:bg-[var(--nav-button-hover-bg)] "
                 }`}
                 onClick={() => {
                   setTeamId(team._id);
                   localStorage.setItem("role", team.role);
                 }}
               >
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center text-[var(--text-color)]">
                   <span className="font-medium">{team.name}</span>
                   <span
                     className={`px-2 py-0.5 text-xs rounded-full ${
@@ -157,27 +179,27 @@ const Team = () => {
           {teamId ? (
             <>
               <div className="flex justify-between items-center">
-                <h2 className="text-xl font-semibold text-gray-900">
+                <h2 className="text-xl font-semibold text-[var(--text-color)]">
                   Documents
                 </h2>
 
                 {/* ✅ Add Document Button */}
                 <Link
                   to={`/teams/${teamId}/documents/new`}
-                  className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
+                  className="inline-flex items-center px-4 py-2 text-sm font-medium text-[var(--text-color)] bg-indigo-600 rounded-md hover:bg-indigo-700"
                 >
                   + Add Document
                 </Link>
               </div>
               {/* Team Details */}
 
-              <div className="bg-white rounded-lg shadow p-6">
+              <div className="bg-[var(--color-bg-2)] rounded-lg shadow p-6  text-[var(--nav-button-text)]">
                 <h2 className="text-xl font-semibold mb-4">Team Details</h2>
                 {teams
                   ?.filter((t) => t._id === teamId)
                   ?.map((team) => (
                     <div key={team._id}>
-                      <p className="font-medium text-gray-900 mb-2">
+                      <p className="font-medium  text-[var(--nav-button-text)] mb-2">
                         {team.name}
                       </p>
                       <ul className="space-y-2">
@@ -250,7 +272,9 @@ const Team = () => {
               </div>
             </>
           ) : (
-            <p className="text-gray-500">Select a team to see details</p>
+            <p className="text-[var(--text-color)]">
+              Select a team to see details
+            </p>
           )}
         </div>
       </div>

@@ -53,18 +53,18 @@ const DocumentCard = ({ document, onDelete }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+    <div className="bg-[var(--color-bg-2)] rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
       <div className="p-6">
         {/* Header */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1">
             <Link
               to={`/teams/documents/${document._id}`}
-              className="text-lg font-semibold text-gray-900 hover:text-indigo-600 transition-colors"
+              className="text-lg font-semibold text-[var(--text-color)] hover:text-indigo-600 transition-colors"
             >
               {document.title}
             </Link>
-            <div className="flex items-center mt-2 text-sm text-gray-500 space-x-4">
+            <div className="flex items-center mt-2 text-sm text-[var(--text-color-2)] space-x-4">
               <div className="flex items-center">
                 <UserIcon className="h-4 w-4 mr-1" />
                 {document.updatedBy.name}
@@ -84,13 +84,13 @@ const DocumentCard = ({ document, onDelete }) => {
               <>
                 <Link
                   to={`/teams/documents/${document._id}/edit`}
-                  className="text-gray-400 hover:text-indigo-600 transition-colors"
+                  className="text-[var(--icon-color)] hover:text-[var(--edit-hover-color)] transition-colors"
                 >
                   <PencilIcon className="h-5 w-5" />
                 </Link>
                 <button
                   onClick={() => handleDelete(document._id)}
-                  className="text-gray-400 hover:text-red-600 transition-colors"
+                  className="text-[var(--icon-color)] cursor-pointer hover:text-[var(--delete-hover-color)] transition-colors"
                 >
                   <TrashIcon className="h-5 w-5" />
                 </button>
@@ -101,24 +101,26 @@ const DocumentCard = ({ document, onDelete }) => {
 
         {/* content */}
         {document.content && (
-          <p className="text-gray-600 mb-4 line-clamp-3">{document.content}</p>
+          <p className=" text-[var(--text-color-2)] mb-4 line-clamp-3">
+            {document.content}
+          </p>
         )}
 
         {/* Tags */}
         {document.tags && document.tags.length > 0 && (
           <div className="flex items-center mb-4">
-            <TagIcon className="h-4 w-4 text-gray-400 mr-2" />
+            <TagIcon className="h-4 w-4 text-[var(--text-color-2)] mr-2" />
             <div className="flex flex-wrap gap-2">
               {document.tags.slice(0, 5).map((tag, index) => (
                 <span
                   key={index}
-                  className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800"
+                  className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium  bg-[var(--nav-button-active-bg)] text-[var(--nav-button-active-text)]"
                 >
                   {tag}
                 </span>
               ))}
               {document.tags.length > 5 && (
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-[var(--text-color-2)]">
                   +{document.tags.length - 5} more
                 </span>
               )}
@@ -131,7 +133,7 @@ const DocumentCard = ({ document, onDelete }) => {
           {document.versions && document.versions.length > 0 && (
             <button
               onClick={() => setShowVersions(!showVersions)}
-              className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-700 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors"
+              className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-[var(--text-color-2)] bg-[var(--nav-button-hover-bg)]  rounded-md  transition-colors"
             >
               <DocumentTextIcon className="h-3 w-3 mr-1" />
               History ({document.versions.length})
@@ -144,12 +146,12 @@ const DocumentCard = ({ document, onDelete }) => {
           <div className="fixed inset-0 z-50 overflow-y-auto">
             <div className="flex min-h-screen items-center justify-center p-4">
               <div
-                className="fixed inset-0 bg-gray-500 bg-opacity-75"
+                className="fixed inset-0 bg-[#00000087]"
                 onClick={() => setShowVersions(false)}
               />
-              <div className="relative bg-white rounded-lg max-w-2xl w-full max-h-96 overflow-y-auto">
+              <div className="relative bg-[var(--color-bg-2)] rounded-lg max-w-2xl w-full max-h-96 overflow-y-auto">
                 <div className="px-6 py-4 border-b border-gray-200">
-                  <h3 className="text-lg font-medium text-gray-900">
+                  <h3 className="text-lg font-medium text-[var(--text-color)]">
                     Version History
                   </h3>
                 </div>
@@ -161,14 +163,14 @@ const DocumentCard = ({ document, onDelete }) => {
                         className="border-l-2 border-indigo-200 pl-4"
                       >
                         <div className="flex items-center justify-between">
-                          <p className="text-sm font-medium text-gray-900">
+                          <p className="text-sm font-medium text-[var(--text-color)]">
                             Version {index + 1}
                           </p>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-[var(--nav-button-text)]">
                             {new Date(version.editedAt).toLocaleString()}
                           </p>
                         </div>
-                        <p className="text-sm text-gray-600 mt-1">
+                        <p className="text-sm text-[var(--nav-button-text)] mt-1">
                           Edited by {version.editedBy?.name || "Unknown"}
                         </p>
                       </div>

@@ -1,24 +1,59 @@
 @import "tailwindcss";
 
-:root {
+body {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+:root {
+  --color-bg-1: #eff6ff;
+  --color-bg-2: #ffffff;
+  --text-color: #000000;
+  --text-color-2: #4b5563;
+  --text-color-3: #432dd7;
+  --button-bg: #432dd7;
+  --edit-hover-color: #432dd7;
+  --delete-hover-color: #ef4444;
+  --nav-button-bg: #ffffff;
+  --nav-button-text: #364153;
+  --nav-button-hover-bg: #f6f3f4;
+  --nav-button-hover-text: #101828;
+  --nav-button-active-bg: #e0e7ff;
+  --nav-button-active-text: #432dd7;
+  --icon-color: #99a1af;
+  --icon-hover-color: #6b7280;
+
+  --color-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Black shadow for light mode */
+}
+
+/* Dark Theme */
+.theme-dark {
+  --color-bg-1: #1f2937; /* dark gray-blue */
+  --color-bg-2: #111827; /* darker background */
+  --text-color: #ffffff; /* main text */
+  --text-color-2: #d1d5db; /* secondary text */
+  --text-color-3: #8b5cf6; /* accent / links */
+  --button-bg: #432dd7; /* primary button */
+  --edit-hover-color: #7c3aed; /* hover for edit */
+  --delete-hover-color: #f87171; /* hover for delete */
+  --nav-button-bg: #1f2937; /* nav background */
+  --nav-button-text: #d1d5db; /* nav text */
+  --nav-button-hover-bg: #374151; /* hover background */
+  --nav-button-hover-text: #ffffff; /* hover text */
+  --nav-button-active-bg: #4f46e5; /* active background */
+  --nav-button-active-text: #ffffff; /* active text */
+  --icon-color: #9ca3af;
+  --icon-hover-color: #f3f4f6;
+  --color-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
 }
 
 .scrollbar-hide::-webkit-scrollbar {
@@ -28,8 +63,5 @@ body {
 .scrollbar-hide {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
-}
-
-.leaflet-popup-content-wrapper {
-  background-color: #fee0cb;
+  color: #000000;
 }

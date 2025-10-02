@@ -207,12 +207,12 @@ const DocumentForm = () => {
 
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto text-black">
+      <div className="max-w-4xl mx-auto text-[var(--text-color)]">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-[var(--text-color)]">
             {isEditing ? "Edit Document" : "Create New Document"}
           </h1>
-          <p className="text-gray-600">
+          <p className="text-[var(--text-color-2)]">
             {isEditing
               ? "Update your document"
               : "Add a new document to your knowledge base"}
@@ -220,12 +220,12 @@ const DocumentForm = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className=" bg-[var(--color-bg-2)] rounded-lg shadow-sm border border-gray-200 p-6">
             {/* Title */}
             <div className="mb-6">
               <label
                 htmlFor="title"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-medium text-[var(--text-color-2)] mb-2"
               >
                 Title
               </label>
@@ -245,7 +245,7 @@ const DocumentForm = () => {
             <div className="mb-6">
               <label
                 htmlFor="content"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-medium text-[var(--text-color)] mb-2"
               >
                 Content
               </label>
@@ -264,7 +264,7 @@ const DocumentForm = () => {
             {/* Tags */}
             {isEditing && (
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-color)] mb-2">
                   Tags
                 </label>
                 <div className="flex flex-wrap gap-2 mb-3">
@@ -322,7 +322,7 @@ const DocumentForm = () => {
               <div className="mb-6">
                 <label
                   htmlFor="summary"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-sm font-medium text-[var(--text-color)] mb-2"
                 >
                   Summary
                 </label>

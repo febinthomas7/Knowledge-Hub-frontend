@@ -86,24 +86,26 @@ const QA = () => {
         {/* Header */}
         <div className="text-center">
           <div className="flex justify-center mb-4">
-            <div className="p-3 bg-indigo-100 rounded-full">
+            <div className="p-3 bg-[var(--color-bg-2)] rounded-full">
               <SparklesIcon className="h-8 w-8 text-indigo-600" />
             </div>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">AI Q&A Assistant</h1>
-          <p className="text-gray-600 mt-2">
+          <h1 className="text-2xl font-bold text-[var(--text-color)]">
+            AI Q&A Assistant
+          </h1>
+          <p className="text-[var(--text-color-2)] mt-2">
             Ask questions about your team's knowledge base and get AI-powered
             answers
           </p>
         </div>
 
         {/* Question Form */}
-        <div className="bg-white rounded-lg shadow-sm border text-black border-gray-200 p-6">
+        <div className="bg-[var(--color-bg-2)] rounded-lg shadow-sm border text-[var(--text-color)] border-gray-200 p-6">
           <form onSubmit={handleSubmit} className="space-y-4 ">
             <div>
               <label
                 htmlFor="question"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-medium text-[var(--text-color-2)] mb-2"
               >
                 Ask a question
               </label>
@@ -121,7 +123,7 @@ const QA = () => {
               <button
                 type="submit"
                 disabled={loading || !question.trim()}
-                className="inline-flex items-center px-6 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 transition-colors"
+                className="inline-flex items-center px-6 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-[var(--text-color)] bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 transition-colors"
               >
                 <SparklesIcon className="h-4 w-4 mr-2" />
                 {loading ? "Asking..." : "Ask AI"}
@@ -133,25 +135,27 @@ const QA = () => {
         {/* Conversations */}
         {conversations?.length > 0 && (
           <div className="space-y-6">
-            <h2 className="text-lg font-medium text-gray-900">
+            <h2 className="text-lg font-medium text-[var(--text-color)]">
               Conversation History
             </h2>
 
             {conversations?.map((conv) => (
               <div
                 key={conv.id}
-                className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
+                className="bg-[var(--color-bg-2)] rounded-lg shadow-sm border border-gray-200 overflow-hidden"
               >
                 {/* Question */}
-                <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                <div className="bg-[var(--color-bg-2)] px-6 py-4 border-b border-gray-200">
                   <div className="flex items-start space-x-3">
-                    <ChatBubbleLeftRightIcon className="h-5 w-5 text-gray-600 mt-0.5" />
+                    <ChatBubbleLeftRightIcon className="h-5 w-5 text-[var(--text-color-2)] mt-0.5" />
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900">
+                      <p className="text-sm font-medium text-[var(--text-color)]">
                         You asked:
                       </p>
-                      <p className="text-gray-700 mt-1">{conv.question}</p>
-                      <p className="text-xs text-gray-500 mt-2">
+                      <p className="text-[var(--text-color)] mt-1">
+                        {conv.question}
+                      </p>
+                      <p className="text-xs text-[var(--text-color-2)] mt-2">
                         {conv.timestamp.toLocaleString()}
                       </p>
                     </div>
@@ -163,16 +167,18 @@ const QA = () => {
                   {conv?.loading ? (
                     <div className="flex items-center space-x-3">
                       <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-indigo-600" />
-                      <p className="text-gray-600">AI is thinking...</p>
+                      <p className="text-[var(--text-color-2)]">
+                        AI is thinking...
+                      </p>
                     </div>
                   ) : (
                     <div className="flex items-start space-x-3">
                       <SparklesIcon className="h-5 w-5 text-indigo-600 mt-0.5" />
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-900 mb-2">
+                        <p className="text-sm font-medium text-[var(--text-color)] mb-2">
                           AI Answer:
                         </p>
-                        <div className="prose prose-sm max-w-none text-gray-700">
+                        <div className="prose prose-sm max-w-none text-[var(--text-color-2)]">
                           {conv.answer.split("\n").map((line, index) => (
                             <p key={index} className="mb-2">
                               {line}
@@ -190,12 +196,12 @@ const QA = () => {
 
         {/* Empty state */}
         {conversations?.length === 0 && (
-          <div className="text-center py-12 bg-white rounded-lg shadow-sm border border-gray-200">
-            <SparklesIcon className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-2 text-sm font-medium text-gray-900">
+          <div className="text-center py-12 bg-[var(--color-bg-2)] rounded-lg shadow-sm border border-gray-200">
+            <SparklesIcon className="mx-auto h-12 w-12 text-[var(--text-color-2)]" />
+            <h3 className="mt-2 text-sm font-medium text-[var(--text-color)]">
               No questions yet
             </h3>
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-sm text-[var(--text-color-2)]">
               Ask your first question to get AI-powered answers from your
               knowledge base
             </p>

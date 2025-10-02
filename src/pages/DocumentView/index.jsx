@@ -17,7 +17,7 @@ const DocumentView = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   //   const { user } = useAuth();
-  const user = "";
+  const user = localStorage.getItem("userId");
   const [document, setDocument] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -72,7 +72,7 @@ const DocumentView = () => {
       <Layout>
         <div className="text-center py-12">
           <DocumentTextIcon className="mx-auto h-12 w-12 text-gray-400" />
-          <h3 className="mt-2 text-sm font-medium text-gray-900">
+          <h3 className="mt-2 text-sm font-medium text-[var(--text-color)]">
             Document not found
           </h3>
         </div>
@@ -80,10 +80,9 @@ const DocumentView = () => {
     );
   }
 
-  const canEdit =
-    document.createdBy._id === localStorage.getItem("userId") ||
-    document.createdByRole === localStorage.getItem("role");
-  console.log(document);
+  const canEdit = document?.permissions?.some(
+    (member) => member.userId === user
+  );
   return (
     <Layout>
       <div className="max-w-4xl mx-auto space-y-6">
@@ -91,7 +90,7 @@ const DocumentView = () => {
         <div className="flex items-center space-x-4">
           <button
             onClick={() => navigate(-1)}
-            className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 transition-colors"
+            className="inline-flex items-center text-sm text-[var(--icon-color)] hover:text-[var(--icon-hover-color)] transition-colors"
           >
             <ArrowLeftIcon className="h-4 w-4 mr-1" />
             Back
@@ -109,14 +108,14 @@ const DocumentView = () => {
         </div>
 
         {/* Document */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div className="bg-[var(--color-bg-2)] rounded-lg shadow-sm border border-gray-200 overflow-hidden">
           {/* Header */}
           <div className="px-6 py-4 border-b border-gray-200">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">
+            <h1 className="text-2xl font-bold text-[var(--text-color)] mb-4">
               {document.title}
             </h1>
 
-            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600">
+            <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--text-color-2)]">
               <div className="flex items-center">
                 <UserIcon className="h-4 w-4 mr-1" />
                 Created by {document.createdBy.name}
@@ -136,12 +135,12 @@ const DocumentView = () => {
             {/* Tags */}
             {document.tags && document.tags.length > 0 && (
               <div className="flex items-center mt-4">
-                <TagIcon className="h-4 w-4 text-gray-400 mr-2" />
+                <TagIcon className="h-4 w-4 text-[var(--text-color-2)] mr-2" />
                 <div className="flex flex-wrap gap-2">
                   {document.tags.map((tag, index) => (
                     <span
                       key={index}
-                      className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800"
+                      className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--nav-button-active-bg)] text-[var(--nav-button-active-text)]"
                     >
                       {tag}
                     </span>
@@ -165,7 +164,10 @@ const DocumentView = () => {
           <div className="px-6 py-6">
             <div className="prose max-w-none">
               {document.content.split("\n").map((paragraph, index) => (
-                <p key={index} className="mb-4 text-gray-700 leading-relaxed">
+                <p
+                  key={index}
+                  className="mb-4 text-[var(--text-color-2)] leading-relaxed"
+                >
                   {paragraph}
                 </p>
               ))}
@@ -174,8 +176,8 @@ const DocumentView = () => {
 
           {/* Version History */}
           {document.versions && document.versions.length > 0 && (
-            <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
-              <h3 className="text-sm font-medium text-gray-900 mb-3">
+            <div className="px-6 py-4 border-t border-gray-200 bg-[var(--color-bg-2)]">
+              <h3 className="text-sm font-medium text-[var(--text-color)] mb-3">
                 Version History
               </h3>
               <div className="space-y-2">
@@ -184,17 +186,17 @@ const DocumentView = () => {
                     key={index}
                     className="flex items-center justify-between text-sm"
                   >
-                    <span className="text-gray-600">
+                    <span className="text-[var(--text-color-2)]">
                       Version {document.versions.length - index} by{" "}
                       {version.editedBy?.name}
                     </span>
-                    <span className="text-gray-500">
+                    <span className="text-[var(--text-color-2)]">
                       {new Date(version.editedAt).toLocaleDateString()}
                     </span>
                   </div>
                 ))}
                 {document.versions.length > 3 && (
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-[var(--text-color-2)]">
                     +{document.versions.length - 3} more versions
                   </p>
                 )}

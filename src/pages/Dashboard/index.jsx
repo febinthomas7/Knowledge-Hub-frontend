@@ -91,10 +91,10 @@ const Dashboard = () => {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-2xl font-bold text-[var(--text-color)]">
               Welcome back, {user?.name || localStorage.getItem("name")}
             </h1>
-            <p className="text-gray-600">
+            <p className="text-[var(--text-color-2)]">
               Manage your knowledge documents and collaborate with your team
             </p>
           </div>
@@ -106,13 +106,13 @@ const Dashboard = () => {
             placeholder="Enter team name"
             value={teamName}
             onChange={(e) => setTeamName(e.target.value)}
-            className="w-full px-3 py-2 border rounded-md text-black"
+            className="w-full px-3 py-2 border rounded-md text-[var(--text-color)]"
             required
           />
           <button
             type="submit"
             disabled={teamLoading}
-            className="w-full py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50"
+            className="w-full py-2 px-4  cursor-pointer bg-[var(--button-bg)] text-white rounded-md hover:bg-indigo-700 disabled:opacity-50"
           >
             {teamLoading ? "Creating..." : "Create Team"}
           </button>
@@ -126,7 +126,7 @@ const Dashboard = () => {
           {/* Documents */}
           <div className=" lg:col-span-2">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-medium text-gray-900">
+              <h2 className="text-lg font-medium text-[var(--text-color)]">
                 Recent Documents
               </h2>
               <Link
@@ -142,7 +142,7 @@ const Dashboard = () => {
                 {[...Array(3)].map((_, i) => (
                   <div
                     key={i}
-                    className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 animate-pulse"
+                    className="bg-[var(--color-bg-2)] rounded-lg shadow-sm border border-gray-200 p-6 animate-pulse"
                   >
                     <div className="h-4 bg-gray-200 rounded w-3/4 mb-4" />
                     <div className="h-3 bg-gray-200 rounded w-full mb-2" />
@@ -151,12 +151,12 @@ const Dashboard = () => {
                 ))}
               </div>
             ) : activities?.length === 0 ? (
-              <div className="text-center py-12 bg-white rounded-lg shadow-sm border border-gray-200">
+              <div className="text-center py-12 bg-[var(--color-bg-2)] rounded-lg shadow-sm border border-gray-200">
                 <DocumentTextIcon className="mx-auto h-12 w-12 text-gray-400" />
-                <h3 className="mt-2 text-sm font-medium text-gray-900">
+                <h3 className="mt-2 text-sm font-medium text-[var(--text-color)]">
                   No documents
                 </h3>
-                <p className="mt-1 text-sm text-gray-500">
+                <p className="mt-1 text-sm text-[var(--text-color-2)]">
                   You need to create a team before adding documents.
                 </p>
               </div>

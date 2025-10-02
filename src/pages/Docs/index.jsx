@@ -157,10 +157,10 @@ const Docs = () => {
           <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl mb-6 shadow-lg">
             <File className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-4xl font-bold text-black   mb-4">
+          <h1 className="text-4xl font-bold  text-[var(--text-color)]   mb-4">
             Document Manager
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-xl  text-[var(--text-color-2)] max-w-2xl mx-auto">
             Upload, organize, and manage your documents with ease. Drag and drop
             files or click to browse.
           </p>
@@ -168,12 +168,12 @@ const Docs = () => {
 
         {/* Upload Section */}
         <div className="mb-16">
-          <div className="bg-white/80 backdrop-blur-sm border border-white/20 rounded-3xl shadow-xl p-8 hover:shadow-2xl transition-all duration-300">
+          <div className="bg-[var(--color-bg-2)] backdrop-blur-sm border border-white/20 rounded-3xl shadow-xl p-8 hover:shadow-2xl transition-all duration-300">
             <div className="flex items-center gap-3 mb-8">
               <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center">
                 <Plus className="w-5 h-5 text-white" />
               </div>
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
+              <h2 className="text-xl sm:text-2xl font-bold text-[var(--text-color)]">
                 Upload New Document
               </h2>
             </div>
@@ -181,10 +181,10 @@ const Docs = () => {
             <div
               className={`relative border-2 border-dashed rounded-2xl p-4 sm:p-12 text-center transition-all duration-300 ${
                 dragActive
-                  ? "border-blue-500 bg-blue-50"
+                  ? "border-blue-500 bg-[var(--color-bg-2)]"
                   : file
                   ? "border-green-500 bg-green-50"
-                  : "border-gray-300 bg-gray-50 hover:border-blue-400 hover:bg-blue-50"
+                  : "border-gray-300 bg-[var(--color-bg-2)] hover:border-blue-400 "
               }`}
               onDragEnter={handleDrag}
               onDragLeave={handleDrag}
@@ -307,9 +307,9 @@ const Docs = () => {
         <div className="space-y-8">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center">
-              <File className="w-5 h-5 text-white" />
+              <File className="w-5 h-5 text-[var(--text-color)]" />
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
+            <h2 className="text-xl sm:text-2xl font-bold text-[var(--text-color)]">
               Your Documents
             </h2>
             <div className="hidden sm:flex-1 sm:flex h-px bg-gradient-to-r from-gray-300 to-transparent ml-4" />
@@ -320,13 +320,13 @@ const Docs = () => {
 
           {docs.length === 0 ? (
             <div className="text-center py-16">
-              <div className="w-24 h-24 bg-gray-100 rounded-full mx-auto mb-6 flex items-center justify-center">
+              <div className="w-24 h-24 bg-[var(--color-bg-2)] rounded-full mx-auto mb-6 flex items-center justify-center">
                 <File className="w-12 h-12 text-gray-400" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              <h3 className="text-xl font-semibold text-[var(--text-color)] mb-2">
                 No documents yet
               </h3>
-              <p className="text-gray-600">
+              <p className="text-[var(--text-color-2)]">
                 Upload your first document to get started
               </p>
             </div>
@@ -335,7 +335,7 @@ const Docs = () => {
               {docs.map((doc, index) => (
                 <div
                   key={doc._id}
-                  className="group bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden transform hover:-translate-y-2"
+                  className="group bg-[var(--color-bg-2)] backdrop-blur-sm border border-white/20 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden transform hover:-translate-y-2"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
                   <div className="p-6">
@@ -352,11 +352,11 @@ const Docs = () => {
                       </button>
                     </div>
 
-                    <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 leading-tight">
+                    <h3 className="font-semibold text-[var(--text-color)] mb-2 line-clamp-2 leading-tight">
                       {doc.filename}
                     </h3>
 
-                    <div className="flex items-center gap-2 text-sm text-gray-500 mb-6">
+                    <div className="flex items-center gap-2 text-sm text-[var(--text-color-2)] mb-6">
                       <Clock className="w-4 h-4" />
                       <span>
                         {new Date(doc.uploadedAt).toLocaleDateString()}

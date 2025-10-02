@@ -81,14 +81,16 @@ const Search = () => {
       <div className="space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Search Documents</h1>
-          <p className="text-gray-600">
+          <h1 className="text-2xl font-bold text-[var(--text-color)]">
+            Search Documents
+          </h1>
+          <p className="text-[var(--text-color-2)]">
             Find documents using text search or AI-powered semantic search
           </p>
         </div>
 
         {/* Search Form */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="bg-[var(--color-bg-2)] rounded-lg shadow-sm border border-gray-200 p-6">
           <form onSubmit={handleSearch} className="space-y-4">
             <div className="  flex flex-col sm:flex-row gap-4">
               <div className="flex-1">
@@ -98,17 +100,17 @@ const Search = () => {
                     type="text"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    className="block w-full pl-10 pr-3 py-2 text-black border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    className="block w-full pl-10 pr-3 py-2 text-[var(--text-color)] border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                     placeholder="Search documents..."
                   />
                 </div>
               </div>
 
-              <div className="flex items-center space-x-2 text-black">
+              <div className="flex items-center space-x-2 text-[var(--text-color)]">
                 <select
                   value={searchType}
                   onChange={(e) => setSearchType(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  className="px-3 py-2 border bg-[var(--color-bg-2)] border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                 >
                   <option value="text">Text Search</option>
                   <option value="semantic">AI Semantic</option>
@@ -117,14 +119,14 @@ const Search = () => {
                 <button
                   type="button"
                   onClick={() => setShowFilters(!showFilters)}
-                  className="px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                  className="px-3 py-2 border border-gray-300 rounded-md shadow-sm text-[var(--text-color-2)]  transition-colors"
                 >
                   <FunnelIcon className="h-5 w-5" />
                 </button>
                 <button
                   type="submit"
                   disabled={loading || !query.trim()}
-                  className="px-6 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 transition-colors"
+                  className="px-6 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-[var(--text-color)] bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 transition-colors"
                 >
                   {loading ? "Searching..." : "Search"}
                 </button>
@@ -132,7 +134,7 @@ const Search = () => {
             </div>
 
             {/* Search Type Info */}
-            <div className="flex items-center text-sm text-gray-600">
+            <div className="flex items-center text-sm text-[var(--text-color-2)]">
               {searchType === "semantic" && (
                 <>
                   <SparklesIcon className="h-4 w-4 mr-1 text-indigo-500" />
@@ -142,7 +144,7 @@ const Search = () => {
               )}
               {searchType === "text" && (
                 <>
-                  <MagnifyingGlassIcon className="h-4 w-4 mr-1 text-gray-500" />
+                  <MagnifyingGlassIcon className="h-4 w-4 mr-1 text-[var(--text-color)]" />
                   Text search looks for exact keyword matches
                 </>
               )}
@@ -151,7 +153,7 @@ const Search = () => {
           {showFilters && (
             <div className="mt-6 pt-6 border-t border-gray-200">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-medium text-gray-900">
+                <h3 className="text-sm font-medium text-[var(--text-color)]">
                   Filter by Tags
                 </h3>
                 {selectedTags?.length > 0 && (
@@ -187,7 +189,7 @@ const Search = () => {
         {/* Results */}
         {documents?.length > 0 && (
           <div>
-            <h2 className="text-lg font-medium text-gray-900 mb-4">
+            <h2 className="text-lg font-medium text-[var(--text-color)] mb-4">
               Search Results ({documents?.length})
             </h2>
             <div className="grid grid-cols-1 gap-6">
@@ -206,12 +208,12 @@ const Search = () => {
 
         {/* Empty state */}
         {!loading && documents?.length === 0 && query && (
-          <div className="text-center py-12 bg-white rounded-lg shadow-sm border border-gray-200">
-            <MagnifyingGlassIcon className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-2 text-sm font-medium text-gray-900">
+          <div className="text-center py-12 bg-[var(--color-bg-1)] rounded-lg shadow-sm border border-gray-200">
+            <MagnifyingGlassIcon className="mx-auto h-12 w-12 text-[var(--text-color-2)]" />
+            <h3 className="mt-2 text-sm font-medium text-[var(--text-color)]">
               No results found
             </h3>
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-sm text-[var(--text-color-2)]">
               Try adjusting your search terms or using semantic search
             </p>
           </div>
