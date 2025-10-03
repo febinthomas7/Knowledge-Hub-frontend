@@ -3,6 +3,8 @@ import Layout from "../../components/Layout";
 import DocumentCard from "../../components/DocumentCard";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
+import { deleteUser, inviteUser, team } from "../../api/user";
+import { handleError, handleSuccess } from "../../utils";
 
 const Team = () => {
   const [teamId, setTeamId] = useState(0);
@@ -11,22 +13,27 @@ const Team = () => {
   const [teamLoading, setTeamLoading] = useState(true);
 
   const fetchTeams = async () => {
+    const credentials = {
+      userId: localStorage.getItem("userId"),
+    };
+    setTeamLoading(true);
     try {
-      const response = await fetch(
-        `${
-          import.meta.env.VITE_BASE_URL
-        }/api/user/my-teams?userId=${localStorage.getItem("userId")}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const data = await team();
+      // const response = await fetch(
+      //   `${
+      //     import.meta.env.VITE_BASE_URL
+      //   }/api/user/my-teams?userId=${localStorage.getItem("userId")}`,
+      //   {
+      //     method: "GET",
+      //     headers: {
+      //       Authorization: `Bearer ${localStorage.getItem("token")}`,
+      //     },
+      //   }
+      // );
 
-      if (!response.ok) throw new Error("Failed to fetch teams");
+      // if (!response.ok) throw new Error("Failed to fetch teams");
 
-      const data = await response.json();
+      // const data = await response.json();
       setTeams(data); // save in state
     } catch (err) {
       console.error(err);
@@ -42,30 +49,29 @@ const Team = () => {
   const sendInvite = async (e) => {
     e.preventDefault();
 
+    const credentials = {
+      email,
+      teamId,
+    };
+
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_BASE_URL}/api/user/team/${teamId}/invite`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`, // if you use auth
-          },
-          body: JSON.stringify({ email }),
-        }
+      const data = await inviteUser(credentials);
+
+      handleSuccess(data.message);
+      setTeams((prevTeams) =>
+        prevTeams.map((t) =>
+          t._id === teamId
+            ? {
+                ...t,
+                members: [...data.team.members],
+              }
+            : t
+        )
       );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        alert("User invited successfully!");
-        e.target.reset();
-      } else {
-        alert(data.message || "Failed to invite user");
-      }
+      e.target.reset();
     } catch (error) {
       console.error(error);
-      alert("Something went wrong");
+      handleError("Failed to send invite");
     }
   };
 
@@ -81,27 +87,13 @@ const Team = () => {
   const handleRemoveMember = async (teamId, memberId) => {
     if (!window.confirm("Are you sure you want to remove this member?")) return;
 
+    const credentials = {
+      teamId,
+      memberId,
+      user: localStorage.getItem("userId"),
+    };
     try {
-      const response = await fetch(
-        `${
-          import.meta.env.VITE_BASE_URL
-        }/api/user/team/${teamId}/member/${memberId}?userId=${localStorage.getItem(
-          "userId"
-        )}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-
-      const data = await response.json();
-      if (!response.ok) {
-        alert(data.message || "Failed to remove member");
-        return;
-      }
+      const data = await deleteUser(credentials);
 
       // Update state locally
       setTeams((prevTeams) =>
@@ -116,7 +108,7 @@ const Team = () => {
       );
     } catch (err) {
       console.error(err);
-      alert("Error removing member");
+      handleError("Error removing member");
     }
   };
 
@@ -208,7 +200,7 @@ const Team = () => {
                             key={index}
                             className="flex justify-between items-center border p-2 rounded"
                           >
-                            <span>{m.user.name}</span>
+                            <span>{m.user.name || m.user}</span>
                             <span
                               className={`px-2 py-0.5 text-xs rounded-full ${
                                 m.role === "admin"

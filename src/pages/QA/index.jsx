@@ -6,6 +6,7 @@ import {
   ChatBubbleLeftRightIcon,
   DocumentTextIcon,
 } from "@heroicons/react/24/outline";
+import { userConversation } from "../../api/user";
 // import toast from 'react-hot-toast';
 
 const QA = () => {
@@ -33,21 +34,24 @@ const QA = () => {
 
     setConversations((prev) => [newConversation, ...prev]);
 
+    const credentials = { question: currentQuestion };
     try {
-      const res = await fetch(
-        `${
-          import.meta.env.VITE_BASE_URL
-        }/api/user/ask?userId=${localStorage.getItem("userId")}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ question: currentQuestion }),
-        }
-      );
+      const data = await userConversation(credentials);
 
-      if (!res.ok) throw new Error("Failed to fetch");
+      // const res = await fetch(
+      //   `${
+      //     import.meta.env.VITE_BASE_URL
+      //   }/api/user/ask?userId=${localStorage.getItem("userId")}`,
+      //   {
+      //     method: "POST",
+      //     headers: { "Content-Type": "application/json" },
+      //     body: JSON.stringify({ question: currentQuestion }),
+      //   }
+      // );
 
-      const data = await res.json(); // ✅ parse JSON
+      // if (!res.ok) throw new Error("Failed to fetch");
+
+      // const data = await res.json();
 
       // Update conversation with answer
       setConversations((prev) =>

@@ -1,14 +1,13 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-// import { useAuth } from "../context/AuthContext";
-// import { documentsAPI } from "../utils/api";
+
 import Layout from "../../components/Layout";
 import DocumentCard from "../../components/DocumentCard";
 import ActivityFeed from "../../components/ActivityFeed";
-import { PlusIcon, DocumentTextIcon } from "@heroicons/react/24/outline";
+import { DocumentTextIcon } from "@heroicons/react/24/outline";
+import { createTeam, teamFeed } from "../../api/user";
 
 const Dashboard = () => {
-  //   const { user } = useAuth();
   const user = "";
   const [feedLoading, setFeedLoading] = useState(true);
   const [activities, setActivities] = useState([]);
@@ -20,18 +19,8 @@ const Dashboard = () => {
 
   const fetchFeed = async () => {
     try {
-      const response = await fetch(
-        `${
-          import.meta.env.VITE_BASE_URL
-        }/api/user/feed?userId=${localStorage.getItem("userId")}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const data = await response.json();
+      const data = await teamFeed();
+
       setActivities(data);
     } catch (error) {
       console.error("Failed to fetch activity:", error);
@@ -53,28 +42,13 @@ const Dashboard = () => {
     setTeamLoading(true);
     setError("");
     setSuccess("");
-
+    const credentials = {
+      name: teamName,
+      userId: localStorage.getItem("userId"),
+    };
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_BASE_URL}/api/user/create-team`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`, // if using JWT
-          },
-          body: JSON.stringify({
-            name: teamName,
-            userId: localStorage.getItem("userId"), // store userId at login
-          }),
-        }
-      );
+      const data = await createTeam(credentials);
 
-      if (!response.ok) {
-        throw new Error("Failed to create team");
-      }
-
-      const data = await response.json();
       setSuccess("Team created successfully!");
       console.log("Created Team:", data);
 

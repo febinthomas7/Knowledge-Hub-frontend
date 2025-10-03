@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { handleError, handleSuccess } from "../../utils";
 import { ToastContainer } from "react-toastify";
+import { userRequestPassword } from "../../api/user";
 const RequestReset = () => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
@@ -11,16 +12,10 @@ const RequestReset = () => {
     e.preventDefault();
     setLoading(true);
 
+    const credentials = { email };
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_BASE_URL}/api/auth/request-reset`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email }),
-        }
-      );
-      const data = await response.json();
+      const data = await userRequestPassword(credentials);
+
       if (data.success === true) {
         handleSuccess(data.message);
       } else {

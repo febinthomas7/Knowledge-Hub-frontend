@@ -24,7 +24,7 @@ const Home = () => {
       </header>
       <div className="flex justify-center items-center h-full w-full z-60 ">
         <div className="w-full h-full backdrop-blur-[2px] fixed"></div>
-        <div className=" p-8 rounded-lg  w-full flex flex-col gap-3 sm:gap-3  justify-center items-center relative select-none text-shadow-2xs text-shadow-black">
+        <div className=" p-8 rounded-lg text-white w-full flex flex-col gap-3 sm:gap-3  justify-center items-center relative select-none text-shadow-2xs text-shadow-black">
           <h2 className="text-2xl sm:text-5xl font-extrabold text-center ">
             Knowledge Hub App
           </h2>

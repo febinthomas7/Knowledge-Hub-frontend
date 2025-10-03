@@ -3,6 +3,7 @@ import { GoEye, GoEyeClosed } from "react-icons/go";
 import { Link, useNavigate } from "react-router-dom";
 import { handleError, handleSuccess } from "../../utils";
 import { ToastContainer } from "react-toastify";
+import { userResetPassword } from "../../api/user";
 function ResetPassword() {
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
@@ -14,16 +15,9 @@ function ResetPassword() {
   const handleResetPassword = async (e) => {
     e.preventDefault();
     setLoading(true);
+    const credentials = { email, otp, newPassword };
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_BASE_URL}/api/auth/verify-otp`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, otp, newPassword }),
-        }
-      );
-      const data = await response.json();
+      const data = await userResetPassword(credentials);
 
       if (data.success) {
         handleSuccess(data.message);

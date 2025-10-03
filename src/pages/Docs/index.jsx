@@ -16,6 +16,12 @@ import {
 } from "lucide-react";
 
 import Layout from "../../components/Layout";
+import {
+  userDeleteDocuments,
+  userDocuments,
+  userUploadDocuments,
+} from "../../api/user";
+import { handleError, handleSuccess } from "../../utils";
 
 const Docs = () => {
   const [file, setFile] = useState(null);
@@ -48,16 +54,18 @@ const Docs = () => {
     }
   };
 
+  const fetchDocuments = async () => {
+    try {
+      const data = await userDocuments();
+      setDocs(data || []);
+    } catch (error) {
+      console.error("Failed to fetch documents", error);
+    }
+  };
+
   useEffect(() => {
     // Replace with your API
-    fetch(
-      `${
-        import.meta.env.VITE_BASE_URL
-      }/api/user/docs?userId=${localStorage.getItem("userId")}`
-    )
-      .then((res) => res.json())
-      .then((data) => setDocs(data))
-      .catch((err) => console.error(err));
+    fetchDocuments();
   }, []);
 
   const handleUpload = async () => {
@@ -72,17 +80,8 @@ const Docs = () => {
     formData.append("userId", localStorage.getItem("userId"));
 
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_BASE_URL}/api/user/doc-upload`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+      const data = await userUploadDocuments(formData);
 
-      if (!res.ok) throw new Error("Upload failed");
-
-      const data = await res.json();
       setUploadedFile(data.doc);
       setDocs((prev) => [...prev, data.doc]);
       setFile(null);
@@ -98,24 +97,13 @@ const Docs = () => {
     if (!window.confirm("Are you sure you want to delete this file?")) return;
 
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_BASE_URL}/api/user/delete/${id}`,
-        {
-          method: "DELETE",
-        }
-      );
-      const data = await res.json();
+      const data = await userDeleteDocuments(id);
 
-      if (res.ok) {
-        alert(data.message);
-        // Remove from frontend state
-        setDocs((prev) => prev.filter((d) => d.gridfsId !== id));
-      } else {
-        alert(data.error || "Delete failed");
-      }
+      handleSuccess(data.message);
+      setDocs((prev) => prev.filter((d) => d.gridfsId !== id));
     } catch (err) {
       console.error(err);
-      alert("Delete failed");
+      handleError("Delete failed");
     }
   };
 
@@ -314,11 +302,11 @@ const Docs = () => {
             </h2>
             <div className="hidden sm:flex-1 sm:flex h-px bg-gradient-to-r from-gray-300 to-transparent ml-4" />
             <div className="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-semibold">
-              {docs.length} {docs.length === 1 ? "doc" : "docs"}
+              {docs?.length} {docs?.length === 1 ? "doc" : "docs"}
             </div>
           </div>
 
-          {docs.length === 0 ? (
+          {docs?.length === 0 ? (
             <div className="text-center py-16">
               <div className="w-24 h-24 bg-[var(--color-bg-2)] rounded-full mx-auto mb-6 flex items-center justify-center">
                 <File className="w-12 h-12 text-gray-400" />
@@ -332,7 +320,7 @@ const Docs = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-              {docs.map((doc, index) => (
+              {docs?.map((doc, index) => (
                 <div
                   key={doc._id}
                   className="group bg-[var(--color-bg-2)] backdrop-blur-sm border border-white/20 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden transform hover:-translate-y-2"

@@ -7,6 +7,7 @@ import { GoEye, GoEyeClosed } from "react-icons/go";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { Watch } from "../../Context";
 import { SparklesIcon } from "@heroicons/react/24/outline";
+import { loginUser } from "../../api/auth";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -25,21 +26,14 @@ const Login = () => {
       setIsWait(true);
     }, 10000);
 
+    const credentials = {
+      email: e.target.email.value,
+      password: e.target.password.value,
+    };
     try {
-      const formData = new FormData(e.target);
-      const data = Object.fromEntries(formData);
-      const url = `${import.meta.env.VITE_BASE_URL}/api/auth/login`;
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      const data = await loginUser(credentials);
 
-      const result = await response.json();
-
-      const { sucess, message, error, jwtToken, name, email, _id } = result;
+      const { sucess, message, error, jwtToken, name, email, _id } = data;
       if (!sucess) {
         handleError(message);
         setIsBtn(false);

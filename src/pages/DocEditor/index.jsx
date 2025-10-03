@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { DocumentEditor } from "@onlyoffice/document-editor-react";
 import { useParams, useLocation } from "react-router-dom";
+import { handleError } from "../../utils";
+import { getDocToken } from "../../api/user";
 
 const DocEditor = () => {
   const { id } = useParams();
@@ -14,21 +16,17 @@ const DocEditor = () => {
   const [config, setConfig] = useState(null);
   const [token, setToken] = useState("");
 
+  const getDocumentToken = async () => {
+    try {
+      const data = await getDocToken(fileId, gridId, type);
+      setConfig(data.config);
+      setToken(data.token);
+    } catch (error) {
+      handleError("Failed to fetch token");
+    }
+  };
   useEffect(() => {
-    fetch(
-      `${
-        import.meta.env.VITE_BASE_URL
-      }/api/user/get-token/${fileId}?name=${localStorage.getItem(
-        "name"
-      )}&userId=${localStorage.getItem("userId")}&gridId=${gridId}&type=${type}`
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        setConfig(data.config);
-        setToken(data.token);
-        console.log(data);
-      })
-      .catch((err) => console.error(err));
+    getDocumentToken;
   }, [fileId]);
 
   if (!config || !token) return <div>Loading...</div>;

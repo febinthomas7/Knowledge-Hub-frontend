@@ -7,6 +7,7 @@ import {
   FunnelIcon,
   SparklesIcon,
 } from "@heroicons/react/24/outline";
+import { userSearch } from "../../api/user";
 
 const Search = () => {
   const [query, setQuery] = useState("");
@@ -23,22 +24,10 @@ const Search = () => {
     if (!query.trim()) return;
 
     setLoading(true);
+    const credentials = { query, mode: searchType };
     try {
-      const response = await fetch(
-        `${
-          import.meta.env.VITE_BASE_URL
-        }/api/user/search?userId=${localStorage.getItem("userId")}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            query,
-            mode: searchType,
-          }),
-        }
-      );
+      const data = await userSearch(credentials);
 
-      const data = await response.json();
       setDocuments(data.results);
       setAllDocuments(data.results);
       const allTags = Array.from(

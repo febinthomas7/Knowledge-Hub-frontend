@@ -12,11 +12,12 @@ import {
   PencilIcon,
   ArrowLeftIcon,
 } from "@heroicons/react/24/outline";
+import { fetcDoc } from "../../api/user";
+import { handleError } from "../../utils";
 
 const DocumentView = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  //   const { user } = useAuth();
   const user = localStorage.getItem("userId");
   const [document, setDocument] = useState("");
   const [loading, setLoading] = useState(true);
@@ -26,24 +27,15 @@ const DocumentView = () => {
   }, [id]);
 
   const fetchDocument = async () => {
+    const credentials = { id };
+
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_BASE_URL}/api/user/document?docId=${id}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const data = await fetcDoc(credentials);
 
-      if (!response.ok) throw new Error("Failed to fetch teams");
-
-      const data = await response.json();
       setDocument(data.document);
     } catch (error) {
-      // toast.error("Failed to fetch document");
-      // navigate("/dashboard");
+      handleError("Failed to fetch document");
+      navigate("/dashboard");
     } finally {
       setLoading(false);
     }

@@ -7,11 +7,11 @@ import {
   UserIcon,
   CalendarIcon,
   TagIcon,
-  EyeIcon,
   PencilIcon,
   TrashIcon,
-  SparklesIcon,
 } from "@heroicons/react/24/outline";
+import { deleteDoc } from "../../api/user";
+import { handleSuccess } from "../../utils";
 // import toast from 'react-hot-toast';
 
 const DocumentCard = ({ document, onDelete }) => {
@@ -24,31 +24,15 @@ const DocumentCard = ({ document, onDelete }) => {
     }
 
     try {
-      const response = await fetch(
-        `${
-          import.meta.env.VITE_BASE_URL
-        }/api/user/document?docId=${docId}&userId=${localStorage.getItem(
-          "userId"
-        )}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`, // if auth needed
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to delete document");
-      }
+      const credentials = { docId, user };
+      const data = await deleteDoc(credentials);
 
       onDelete(docId);
 
-      alert("Document deleted successfully ✅");
+      handleSuccess(data.message || "Document deleted successfully");
     } catch (error) {
       console.error(error);
-      alert("Error deleting document ❌");
+      handleDelete("Error deleting document");
     }
   };
 

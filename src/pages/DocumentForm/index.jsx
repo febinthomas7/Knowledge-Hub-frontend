@@ -2,6 +2,14 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Layout from "../../components/Layout";
 import { SparklesIcon, TagIcon } from "@heroicons/react/24/outline";
+import { handleError, handleSuccess } from "../../utils";
+import {
+  createDoc,
+  fetcDoc,
+  generateSummary,
+  generateTags,
+  updateDoc,
+} from "../../api/user";
 
 const DocumentForm = () => {
   const { id, teamId } = useParams();
@@ -16,7 +24,7 @@ const DocumentForm = () => {
   const [loading, setLoading] = useState(false);
   const [aiTagLoading, setTagAiLoading] = useState(false);
   const [aiSummaryLoading, setSummaryAiLoading] = useState(false);
-
+  const user = localStorage.getItem("userId");
   const [tagInput, setTagInput] = useState("");
 
   useEffect(() => {
@@ -26,19 +34,9 @@ const DocumentForm = () => {
   }, [id, isEditing]);
 
   const fetchDocument = async () => {
+    const credentials = { id };
     try {
-      const response = await fetch(
-        `${
-          import.meta.env.VITE_BASE_URL
-        }/api/user/document?teamId=${teamId}&docId=${id}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const data = await response.json();
+      const data = await fetcDoc(credentials);
 
       const doc = data.document;
 
@@ -87,62 +85,39 @@ const DocumentForm = () => {
     e.preventDefault();
 
     setSummaryAiLoading(true);
+    const credentials = { title: formData.title, content: formData.content };
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_BASE_URL}/api/user/get-summary`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            title: formData.title,
-            content: formData.content,
-          }),
-        }
-      );
+      const data = await generateSummary(credentials);
 
-      const data = await response.json();
       setFormData({
         ...formData,
         summary: data.summary,
       });
+      handleSuccess("AI summary generated!");
       console.log("Generated summary:", data.summary);
     } catch (error) {
+      handleError("Failed to generate summary");
       console.log(error);
-      // toast.error("Failed to generate summary");
     } finally {
       setSummaryAiLoading(false);
     }
   };
 
   const handleGenerateAITags = async () => {
-    console.log("✅ function triggered"); // this prints, good
-
     setTagAiLoading(true);
+    const credentials = { content: formData.content };
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_BASE_URL}/api/user/get-tags`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            content: formData.content,
-          }),
-        }
-      );
+      const data = await generateTags(credentials);
 
-      const data = await response.json();
       const newTags = [...new Set([...formData.tags, ...data.tags])];
       setFormData({
         ...formData,
         tags: newTags,
       });
-      // toast.success("AI tags generated!");
+
+      handleSuccess("AI tags generated!");
     } catch (error) {
-      // toast.error("Failed to generate tags");
+      handleError("Failed to generate tags");
     } finally {
       setTagAiLoading(false);
     }
@@ -151,55 +126,37 @@ const DocumentForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    let response;
 
     try {
-      let response;
       if (isEditing) {
         // Update existing document
-        response = await fetch(
-          `${
-            import.meta.env.VITE_BASE_URL
-          }/api/user/document/${id}?userId=${localStorage.getItem("userId")}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(formData),
-          }
-        );
+        const credentials = { formData, id, user };
+
+        response = await updateDoc(credentials);
       } else {
         // Create new document
+        const credentials = {
+          formData,
+          teamId,
+          user,
+          role: localStorage.getItem("role"),
+        };
 
-        response = await fetch(
-          `${
-            import.meta.env.VITE_BASE_URL
-          }/api/user/document?team=${teamId}&userId=${localStorage.getItem(
-            "userId"
-          )}&role=${localStorage.getItem("role")}`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(formData),
-          }
-        );
+        response = await createDoc(credentials);
       }
 
-      if (!response.ok) {
-        throw new Error("Server error");
-      }
+      handleSuccess(
+        isEditing
+          ? "Document updated successfully"
+          : "Document created successfully"
+      );
 
-      // toast.success(
-      //   isEditing ? "Document updated successfully" : "Document created successfully"
-      // );
       navigate("/dashboard");
     } catch (error) {
-      // toast.error(
-      //   isEditing ? "Failed to update document" : "Failed to create document"
-      // );
-      console.error(error);
+      handleError(
+        isEditing ? "Failed to update document" : "Failed to create document"
+      );
     } finally {
       setLoading(false);
     }

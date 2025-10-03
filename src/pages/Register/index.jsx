@@ -5,6 +5,7 @@ import { useState } from "react";
 import { GoEye, GoEyeClosed } from "react-icons/go";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { SparklesIcon } from "@heroicons/react/24/outline";
+import { registerUser } from "../../api/auth";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -21,28 +22,22 @@ const Register = () => {
       setIsWait(true);
     }, 10000);
 
+    const credentials = {
+      name: e.target.name.value,
+      email: e.target.email.value,
+      password: e.target.password.value,
+    };
     try {
-      const formData = new FormData(e.target);
-      const data = Object.fromEntries(formData);
-      const { name, email, password } = data;
+      const { name, email, password } = credentials;
 
       if (!name || !email || !password) {
         setIsBtn(false);
         return handleError("All fields are required");
       }
 
-      const url = `${import.meta.env.VITE_BASE_URL}/api/auth/signin`;
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      const data = await registerUser(credentials);
 
-      const result = await response.json();
-
-      const { sucess, message, error } = result;
+      const { sucess, message, error } = data;
       if (!sucess) {
         handleError(message);
         setIsBtn(false);
@@ -178,7 +173,7 @@ const Register = () => {
                   )}
                 </>
               ) : (
-                "Sign In"
+                "Register"
               )}
             </button>
             <div>
